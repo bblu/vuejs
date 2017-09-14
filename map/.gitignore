@@ -1,0 +1,13 @@
+.DS_Store
+
+node_modules/
+
+npm-debug.log
+
+.git/
+
+LICENSE
+dist/
+static/
+README.md
+todos.txt
