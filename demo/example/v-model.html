@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>v-model</title>
+    <script type="text/javascript" src="../assets/js/vue.js"></script>
+</head>
+<body>
+    <h1>v-model test</h1>
+    <hr>
+    <div id="app">
+        <p>original message: {{message}}!</p>
+        <h3>text input</h3>
+        <p>v-model.normal<input type="text" v-model="message"></p>
+        <p>v-model.lazy<input type="text" v-model.lazy="message"></p>
+        <p>v-model.number<input type="text" v-model.number="message"></p>
+        <p>v-model.trim<input type="text" v-model.trim="message"></p>
+        <hr>
+        <h3>check box</h3>
+        <p>isOld:<input type="checkbox" id="isOld" v-model="isOld"></p>
+        <hr>
+        <h3>v-model array</h3>
+        <p>
+            <input type="checkbox" id="JSPang" value="JSPang" v-model="web_Names">
+            <label for="JSPang">JSPang</label>
+            <input type="checkbox" id="Panda" value="Panda" v-model="web_Names">
+            <label for="JSPang">Panda</label>
+            <input type="checkbox" id="PanPan" value="PanPan" v-model="web_Names">
+            <label for="JSPang">PanPan</label>
+        <p>what you check:{{web_Names}}</p>
+        </p>
+        <hr>
+        <h3>radio button</h3>
+        <input type="radio" id="one" value="male" v-model="sex">
+        <label for="one">male</label>
+        <input type="radio" id="two" value="female" v-model="sex">
+        <label for="one">female</label>
+        <p>sex:{{sex}}</p>
+        <hr>
+        <h3>text textarea</h3>
+        <textarea cols="30" rows="10" v-model="message"></textarea>
+
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el:'#app',
+            data: {
+                message:'hello Vue!',
+                isOld:true,
+                web_Names:[],
+                sex:''
+            },
+            methods: {
+                add: function () {
+                    this.count++;
+                },
+                sub: function () {
+                    this.count--;
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

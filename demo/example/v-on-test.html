@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>v-on event listener</title>
+    <script type="text/javascript" src="../assets/js/vue.js"></script>
+</head>
+<body>
+    <h1>v-on event listener</h1>
+    <hr>
+    <div id="app">
+        court:{{count}}<br/><br/>
+        <button v-on:click="add">add[+]</button>
+        <button v-on:click="sub">sub[-]</button>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el:'#app',
+            data: {
+                count:0
+            },
+            methods: {
+                add: function () {
+                    this.count++;
+                },
+                sub: function () {
+                    this.count--;
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

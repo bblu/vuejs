@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HelloWorld</title>
+    <script type="text/javascript" src="../assets/js/vue.js"></script>
+</head>
+<body>
+    <h1>hello v-if</h1>
+    <br>
+    <div id="app">
+        <div v-show="isLogin">show login!</div>
+        <div v-if="isLogin">hello bblu !</div>
+        <div v-else>please login!</div>
+    </div>
+    <script type="text/javascript">
+        var app = new Vue({
+            el:"#app",
+            data:{
+               isLogin:true
+            }
+        })
+    </script>
+</body>
+</html>
