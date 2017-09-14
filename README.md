@@ -1,8 +1,15 @@
-# test
+# learn how to vue
 
 > A Vue.js project by bblu
 
-## Build Setup
+## demo
+# simple to test vue use life-server
+npm install life-server -g
+life-server
+
+## map not finished
+
+## pos Build Setup
 
 ``` bash
 # install dependencies
