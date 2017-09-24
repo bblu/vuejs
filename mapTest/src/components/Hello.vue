@@ -1,27 +1,30 @@
 <template scope='scope'>
-<div class="hello">
-    <h1>{{ msg }}: {{ username }}</h1>
-
-    <!-- v-for在进行过度时，使用 transition-group 标签，使用后内层标签需要有独有的 key 值 -->
-    <transition-group name="list-complete" tag="ul">
-        <li v-for="(item, index) in user" :key="item._id" class="list-complete-item">
-            {{ index+1 }}. {{ item.email }}
-            <el-button type="" @click="del_user(index)">删除</el-button>
-        </li>
-    </transition-group>
-    <br>
-    <el-button type="primary" @click="logout()">登出</el-button>
-</div>
+<table class="hello" width="100%" style="height: 100%;" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td width="20%" valign="top" bgcolor="#999f8e">
+            <Left></Left>
+        </td>
+        <td width="80%" valign="top" bgcolor="#d2d8c7" style="position: relative">
+            <Leafmap></Leafmap>
+        </td>
+    </tr>
+</table>
 </template>
 
 <script>
 /**
  * @author: weakgoldfish
  */
+import Left from '@/components/Left.vue'
+import Leafmap from '@/components/Leafmap.vue'
 import * as types from '../store/types'
 import api from '../axios'
 export default {
     name: 'hello',
+    components: {
+        Left,
+        Leafmap
+    },
     data() {
         return {
             msg: 'Welcome to Vue-login',
@@ -85,6 +88,26 @@ export default {
 </script>
 
 <style scoped>
+html,body{margin:0; padding: 0;}
+.left,.right,.center {
+    line-height:60px; 
+    text-align:center;
+}
+
+.left {
+    position:absolute; 
+    top:58; left:2; 
+    width: 300px; 
+    height:auto;
+    background-color: #ccc;}
+.right {
+    position:absolute; 
+    top:0; right:0;  
+    width: 300px; 
+    background-color: #ccc;}
+.map { 
+    margin: 0px 0px 0px 300px; 
+    background-color: #666;}
 h1,
 h2 {
     font-weight: normal;

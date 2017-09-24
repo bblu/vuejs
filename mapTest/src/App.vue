@@ -1,16 +1,28 @@
 <template>
-<div id="app">
-    <div class="banner">
-        <img src="./assets/logo-sm.png">
-        <h1 class="banner-txt">地图更新工具</h1>
-    </div>
-    <router-view></router-view>
+<div id="app" class="layout">
+    <table width="100%" style="height: 100%;" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td style="height: 50px" background-color="#008040">
+                <Banner></Banner>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <router-view></router-view>
+            </td>
+        </tr>
+    </table>
 </div>
 </template>
 
 <script>
+import Banner from '@/components/Header.vue'
+
 export default {
-    name: 'app'
+    name: 'app',
+    components: {
+        Banner
+    }
 }
 </script>
 
@@ -19,20 +31,25 @@ export default {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
+    text-align: left;
     color: #2c3e50;
-    margin-top: 120px;
+    margin-top: 0px;
 }
-.banner{
-        padding: 5px 10px;
-        background-color: #080;
-        color: #fff;
-        font-size: 16px;
-        line-height: 20px;
+html,body{
+    width:99.5%; 
+    height:99%;
+} 
+.layout{
+    height:100%;
+    border: 1px solid #d7dde4;
+    background: #f5f7f9;
+}
+.layout-content{
+        min-height: 200px;
+        margin: 15px;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 4px;
     }
-.logo {
-    position: relative;
-    width: 30%;
-    margin-bottom: 40px;
-}
+
 </style>
