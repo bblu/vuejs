@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="height: 20%; overflow: auto;">
+    <div style="height: 10%; overflow: auto;">
       <h3>Simple map</h3>
       <p>Marker is placed at {{ marker.lat }}, {{ marker.lng }}</p>
       <p> Center is at {{ currentCenter }} and the zoom is: {{ currentZoom }} </p>
@@ -10,7 +10,7 @@
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      style="height: 80%"
+      style="height: 800px; width: 100%;"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
       <l-tile-layer
@@ -34,8 +34,9 @@
 import { L, LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 
 export default {
-  name: 'Example',
+  name: 'VueLeaflet',
   components: {
+    L,
     LMap,
     LTileLayer,
     LMarker,
@@ -44,12 +45,12 @@ export default {
   data() {
     return {
       zoom: 13,
-      center: L.latLng(47.413220, 120.219482),
+      center: L.latLng(40.0482567, 116.468478),
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      marker: L.latLng(47.413220, 120.219482),
+      marker: L.latLng(40.0482567, 116.468478),
       currentZoom: 11.5,
-      currentCenter: L.latLng(47.413220, 120.219482),
+      currentCenter: L.latLng(40.0482567, 116.468478),
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5
@@ -72,7 +73,3 @@ export default {
   }
 }
 </script>
-
-<style>
-@import "../../../node_modules/leaflet/dist/leaflet.css";
-</style>
