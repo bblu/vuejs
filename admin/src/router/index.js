@@ -30,9 +30,9 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Dashboard',
-    hidden: true,
     children: [{
       path: 'dashboard',
+      meta: { title: 'dashboard', icon: 'dashboard' },
       component: () => import('@/views/dashboard/index')
     }]
   },
@@ -48,7 +48,7 @@ export const constantRouterMap = [
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        meta: { title: 'table', icon: 'table' }
       },
       {
         path: 'tree',
@@ -67,6 +67,54 @@ export const constantRouterMap = [
         name: 'AIFly',
         component: () => import('@/views/aifly/index'),
         meta: { title: 'aifly', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/line',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Line',
+        component: () => import('@/views/mapline0/index'),
+        meta: { title: 'line', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/shape',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Shape',
+        component: () => import('@/views/mapshape3/index'),
+        meta: { title: 'shape', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/album',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Album',
+        component: () => import('@/views/photoalbum1/index'),
+        meta: { title: 'album', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/draw',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Draw',
+        component: () => import('@/views/photodraw2/index'),
+        meta: { title: 'draw', icon: 'form' }
       }
     ]
   },
