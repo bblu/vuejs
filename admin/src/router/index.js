@@ -83,18 +83,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/shape',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Shape',
-        component: () => import('@/views/mapshape3/index'),
-        meta: { title: 'shape', icon: 'form' }
-      }
-    ]
-  },
-  {
     path: '/album',
     component: Layout,
     children: [
@@ -115,6 +103,18 @@ export const constantRouterMap = [
         name: 'Draw',
         component: () => import('@/views/photodraw2/index'),
         meta: { title: 'draw', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/shape',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Shape',
+        component: () => import('@/views/mapshape3/index'),
+        meta: { title: 'shape', icon: 'form' }
       }
     ]
   },
