@@ -1,69 +1,90 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Activity name">
-        <el-input v-model="form.name"/>
-      </el-form-item>
-      <el-form-item label="Activity zone">
-        <el-select v-model="form.region" placeholder="please select your zone">
-          <el-option label="Zone one" value="shanghai"/>
-          <el-option label="Zone two" value="beijing"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Activity time">
-        <el-col :span="11">
-          <el-date-picker v-model="form.date1" type="date" placeholder="Pick a date" style="width: 100%;"/>
-        </el-col>
-        <el-col :span="2" class="line">-</el-col>
-        <el-col :span="11">
-          <el-time-picker v-model="form.date2" type="fixed-time" placeholder="Pick a time" style="width: 100%;"/>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="Instant delivery">
-        <el-switch v-model="form.delivery"/>
-      </el-form-item>
-      <el-form-item label="Activity type">
-        <el-checkbox-group v-model="form.type">
-          <el-checkbox label="Online activities" name="type"/>
-          <el-checkbox label="Promotion activities" name="type"/>
-          <el-checkbox label="Offline activities" name="type"/>
-          <el-checkbox label="Simple brand exposure" name="type"/>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Resources">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="Sponsor"/>
-          <el-radio label="Venue"/>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="Activity form">
-        <el-input v-model="form.desc" type="textarea"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
-      </el-form-item>
-    </el-form>
+    <svg
+      width="800"
+      height="400"
+      @mousedown="onMouseDown"
+      @mousemove="onMouseMove"
+      @mouseup="onMouseUp">
+      <polygon :points="points"/>
+      <circle cx="100" cy="100" r="80"/>
+      <rect :x="stats[0].value" :width="collection[0].w" y="0" height="100" />
+    </svg>
+    <div v-for="stat in stats">
+      <label>{{ stat.label }}</label>
+      <input v-model="stat.value" type="range" min="0" max="100">
+      <span>{{ stat.value }}</span>
+      <button class="remove" @click="remove(stat)">X</button>
+    </div>
   </div>
 </template>
 
 <script>
+//      <rect :x="this.graphList[0].x" :y="graphList[0].y" :width="graphList[0].w" :height="graphList[0].h"/>
+var stats = [
+  { label: 'A', value: 100 },
+  { label: 'B', value: 100 },
+  { label: 'C', value: 100 },
+  { label: 'D', value: 100 }
+]
+var collection = [
+  { type: 'r', x: 50, y: 30, w: 200, h: 100 }
+]
+var downFlag = false;
+
 export default {
   data() {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      }
+      stats,
+      collection
+    }
+  },
+  computed: {
+    // a computed property for the polygon's points
+    points: function() {
+      var total = this.stats.length
+      return this.stats
+        .map(function(stat, i) {
+          var point = valueToPoint(stat.value, i, total)
+          return point.x + ',' + point.y
+        })
+        .join(' ')
     }
   },
   methods: {
+    onMouseDown(e) {
+      console.log('mouse down at', e.offsetX, e.offsetY)
+      downFlag = true
+    },
+    onMouseMove(e) {
+      if(downFlag){
+        
+      }
+    },
+    onMouseUp(e){
+      if(downFlag){
+        console.log('mouse drag to', e.offsetX, e.offsetY)
+      }else{
+        console.log('mouse up at', e.offsetX, e.offsetY)
+      }
+      downFlag = false
+    },
+    add: function(e) {
+      e.preventDefault()
+      if (!this.newLabel) return
+      this.stats.push({
+        label: this.newLabel,
+        value: 100
+      })
+      this.newLabel = ''
+    },
+    remove: function(stat) {
+      if (this.stats.length > 3) {
+        this.stats.splice(this.stats.indexOf(stat), 1)
+      } else {
+        alert('Can\'t delete more!')
+      }
+    },
     onSubmit() {
       this.$message('submit!')
     },
@@ -75,11 +96,37 @@ export default {
     }
   }
 }
+// math helper...
+function valueToPoint(value, index, total) {
+  var x = 0
+  var y = -value * 0.8
+  var angle = ((Math.PI * 2) / total) * index
+  var cos = Math.cos(angle)
+  var sin = Math.sin(angle)
+  var tx = x * cos - y * sin + 100
+  var ty = x * sin + y * cos + 100
+  return {
+    x: tx,
+    y: ty
+  }
+}
 </script>
 
 <style scoped>
-.line{
+.line {
   text-align: center;
+}
+rect {
+  fill: transparent;
+  stroke: #000;
+}
+polygon {
+  fill: transparent;
+  stroke: #999;
+}
+circle {
+  fill: transparent;
+  stroke: #999;
 }
 </style>
 
