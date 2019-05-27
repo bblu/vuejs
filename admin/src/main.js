@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { L } from 'vue2-leaflet'
+import 'leaflet/dist/leaflet.css'
 // import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets

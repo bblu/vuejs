@@ -1,6 +1,11 @@
 export default {
   route: {
     dashboard: 'Dashboard',
+    aifly: 'AI Fly',
+    line: 'MapLine0',
+    shape: 'MapShape3',
+    album: 'PhotoAlbum1',
+    draw: 'PhotoDraw2',
     introduction: 'Introduction',
     documentation: 'Documentation',
     guide: 'Guide',
@@ -37,7 +42,7 @@ export default {
     'menu1-2-2': 'Menu 1-2-2',
     'menu1-3': 'Menu 1-3',
     menu2: 'Menu 2',
-    Table: 'Table',
+    table: 'Table',
     dynamicTable: 'Dynamic Table',
     dragTable: 'Drag Table',
     inlineEditTable: 'Inline Edit',

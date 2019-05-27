@@ -1,6 +1,11 @@
 export default {
   route: {
     dashboard: '首页',
+    aifly: '智能飞行',
+    line: '杆塔线路0',
+    shape: '统计地图3',
+    album: '图片浏览1',
+    draw: '图片标绘2',
     introduction: '简述',
     documentation: '文档',
     guide: '引导页',
@@ -37,7 +42,7 @@ export default {
     'menu1-2-2': '菜单1-2-2',
     'menu1-3': '菜单1-3',
     menu2: '菜单2',
-    Table: 'Table',
+    table: '表格',
     dynamicTable: '动态Table',
     dragTable: '拖拽Table',
     inlineEditTable: 'Table内编辑',
