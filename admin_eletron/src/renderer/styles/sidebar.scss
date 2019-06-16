@@ -3,6 +3,8 @@
   // 主体区域
   .main-container {
     min-height: 100%;
+    bottom: 0;
+    right: 0;
     transition: margin-left .28s;
     margin-left: 180px;
   }

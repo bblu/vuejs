@@ -1,8 +1,12 @@
 export default {
   route: {
     dashboard: '工作台',
-    aifly: '智能飞行',
     line: '杆塔线路',
+    fly: '智能飞行',
+    data: '数据管理',
+    upload: '飞行数据',
+    analyze: '分析审核',
+    statistics: '统计报告',
     shape: '专题地图',
     album: '图片浏览',
     draw: '图片标绘',
@@ -83,8 +87,8 @@ export default {
     size: '布局大小'
   },
   login: {
-    title: '系统登录',
-    logIn: '登录',
+    title: '电 网 巡 查',
+    login: '登录',
     username: '账号',
     password: '密码',
     any: '随便填',

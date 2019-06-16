@@ -1,9 +1,10 @@
 export default {
   route: {
     dashboard: 'Dashboard',
-    aifly: 'AI Fly',
-    line: 'MapLine0',
-    shape: 'MapShape3',
+    line: 'MapLine',
+    fly: 'AI Fly',
+    data: 'Fly Data',
+    shape: 'MapShape',
     album: 'PhotoAlbum1',
     draw: 'PhotoDraw2',
     introduction: 'Introduction',
@@ -82,8 +83,8 @@ export default {
     size: 'Global Size'
   },
   login: {
-    title: 'Login Form',
-    logIn: 'Log in',
+    title: 'Power-Grid-Admin',
+    login: 'Log in',
     username: 'Username',
     password: 'Password',
     any: 'any',

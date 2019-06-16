@@ -32,8 +32,9 @@ export const constantRouterMap = [
     name: 'Dashboard',
     children: [{
       path: 'dashboard',
-      meta: { title: 'dashboard', icon: 'dashboard' },
-      component: () => import('@/views/dashboard/index')
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: 'dashboard', icon: 'dashboard' }
     }]
   },
   {
@@ -49,27 +50,53 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/example',
+    path: '/fly',
     component: Layout,
-    redirect: '/example/table',
-    name: 'example',
-    meta: { title: 'example', icon: 'example' },
+    redirect: '/fly/tower',
+    name: 'Fly',
+    meta: { title: 'fly', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'table',
+        path: 'tower',
+        name: 'tower',
         component: () => import('@/views/table/index'),
         meta: { title: 'table', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'tree',
+        path: 'task',
+        name: 'task',
         component: () => import('@/views/tree/index'),
         meta: { title: 'tree', icon: 'tree' }
       }
     ]
   },
-
+  {
+    path: '/data',
+    component: Layout,
+    redirect: '/data/upload',
+    name: 'Data',
+    meta: { title: 'data', icon: 'example' },
+    children: [
+      {
+        path: 'upload',
+        name: 'upload',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'upload', icon: 'table' }
+      },
+      {
+        path: 'analyze',
+        name: 'analyze',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'analyze', icon: 'tree' }
+      },
+      {
+        path: 'statistics',
+        name: 'statistics',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'statistics', icon: 'tree' }
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,
@@ -82,7 +109,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
   { path: '*', redirect: '/404', hidden: true }
 ]
 

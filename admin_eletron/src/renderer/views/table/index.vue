@@ -6,6 +6,7 @@
           {{scope.$index}}
         </template>
       </el-table-column>
+      
       <el-table-column label="Title">
         <template slot-scope="scope">
           {{scope.row.title}}

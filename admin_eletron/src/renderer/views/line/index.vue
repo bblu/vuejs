@@ -1,95 +1,80 @@
 <template>
-  <div>
-    <l-map
-      :zoom="zoom"
-      :center="center"
-      :options="mapOptions"
-      style="height: 960px; width: 100%;"
-      @update:center="centerUpdate"
-      @update:zoom="zoomUpdate">
-      <l-tile-layer
-        :url="url"
-        :attribution="attribution"/>
-      <l-marker :lat-lng="marker">
-        <l-popup>
-          <div @click="popupClick">
-            I am a tooltip
-            <p v-show="showParagraph">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi. Donec finibus semper metus id malesuada.
-            </p>
-          </div>
-        </l-popup>
-      </l-marker>
-      <l-circle
-        :lat-lng="circle.center"
-        :radius="circle.radius">
-        <l-popup content="Circle"/>
-      </l-circle>
-      <l-polyline
-        :lat-lngs="polyline.latlngs"
-        :color="polyline.color">
-        <l-popup>
-          <popup-content :data="polyline" />
-        </l-popup>
-        <l-tooltip>
-          <tooltip-content :data="polyline" />
-        </l-tooltip>
-      </l-polyline>
-    </l-map>
+  <div class="line-container">
+    <el-container style="height:600px; border: 1px solid #eee">
+      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+        <el-input placeholder="Filter keyword" v-model="filterText" style="margin-bottom:1px;"></el-input>
+        <el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2"></el-tree>
+      </el-aside>
+      <el-main style="border: 1px solid #eee">
+        <el-table :data="tableData">
+          <el-table-column prop="date" label="日期" width="140"></el-table-column>
+          <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+          <el-table-column prop="address" label="地址"></el-table-column>
+        </el-table>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script>
-import { L, LPolyline, LCircle, LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
-
 export default {
-  name: 'DriedTower',
-  components: {
-    L,
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPopup,
-    LPolyline,
-    LCircle
-  },
   data() {
     return {
-      zoom: 13,
-      center: L.latLng(40.0482567, 116.468478),
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      marker: L.latLng(40.0482567, 116.468478),
-      currentZoom: 11.5,
-      currentCenter: L.latLng(40.0482567, 116.468478),
-      showParagraph: false,
-      mapOptions: {
-        zoomSnap: 0.5
-      },
-      circle: {
-        center: L.latLng(40.0482567, 116.468478),
-        radius: 4500
-      },
-      polyline: {
-        type: 'polyline',
-        latlngs: [[40.0482567, 116.468478], [40.1482567, 116.468479], [40.2482567, 116.468480], [40.0482567, 116.468481]],
-        color: 'green'
-      }
+      data2: [{
+        id: 1,
+        label: 'Level one 1',
+        children: [{
+          id: 4,
+          label: 'Level two 1-1',
+          children: [{
+            id: 9,
+            label: 'Level three 1-1-1'
+          }, {
+            id: 10,
+            label: 'Level three 1-1-2'
+          }]
+        }]
+      }, {
+        id: 2,
+        label: 'Level one 2',
+        children: [{
+          id: 5,
+          label: 'Level two 2-1'
+        }, {
+          id: 6,
+          label: 'Level two 2-2'
+        }]
+      }, {
+        id: 3,
+        label: 'Level one 3',
+        children: [{
+          id: 7,
+          label: 'Level two 3-1'
+        }, {
+          id: 8,
+          label: 'Level two 3-2'
+        }]
+      }]
     }
   },
   methods: {
-    zoomUpdate(zoom) {
-      this.currentZoom = zoom
-    },
-    centerUpdate(center) {
-      this.currentCenter = center
-    },
-    showLongText() {
-      this.showParagraph = !this.showParagraph
-    },
-    popupClick() {
-      alert('呵呵。。。')
-    }
+
   }
 }
 </script>
+
+<style scoped>
+.line-container {
+
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+.filter-tree{
+  background-color: #eee;
+}
+.line{
+  text-align: center;
+}
+</style>
+
