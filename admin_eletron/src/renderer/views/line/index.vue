@@ -13,6 +13,13 @@
           <el-table-column prop="name" label="name" width="160"></el-table-column>
           <el-table-column prop="height" label="height"></el-table-column>
           <el-table-column prop="width" label="width"></el-table-column>
+          <el-table-column label="Actions" align="center" width="260" class-name="small-padding fixed-width">
+          <template slot-scope="{row}">
+            <upload-model-component :handle-upload="handleUpload" :before-upload="beforeUpload" />
+            <el-button v-if="row.status!=null" size="mini" @click="handleTarget(row)">target</el-button>
+            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(row,'deleted')">Delete</el-button>
+        </template>
+      </el-table-column>
         </el-table>
       </el-main>
     </el-container>
@@ -21,9 +28,11 @@
 
 <script>
 // import { generateTitle } from '@/utils/i18n'
+import UploadModelComponent from '@/components/Upload/Model.vue'
 import { getList, getTower } from '@/api/line'
-
+import { uploadModel } from '@/api/file'
 export default {
+  components: { UploadModelComponent },
   data() {
     return {
       list: null,
@@ -67,6 +76,10 @@ export default {
           treeMap[v].push({
             id: line.id,
             name: line.name })
+          if (page.currentLine == null) {
+            page.currentLine = treeMap[v][0]
+            page.selectLine(line.id)
+          }
         }
         for (const key in treeMap) {
           if (key === '_c') {
@@ -81,14 +94,17 @@ export default {
         page.treeLoading = false
       })
     },
-    onTreeClick(data) {
-      if (data.children || this.currentLine === data) {
+    onTreeClick(row) {
+      if (row.children || this.currentLine === row) {
         return
       }
-      this.currentLine = data
+      this.currentLine = row
+      this.selectLine(row.id)
+    },
+    selectLine(lineId) {
       this.tableLoading = true
       const page = this
-      getTower(data.id).then(response => {
+      getTower(lineId).then(response => {
         const towers = response.data
         for (const t of towers) {
           t.name = page.currentLine.name + t.serial + '#杆塔'
@@ -96,6 +112,29 @@ export default {
         page.tableData = towers
         page.tableLoading = false
       })
+    },
+    beforeUpload(file) {
+      this.loading = true
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (isLt1M) {
+        return true
+      }
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleUpload(fileRaw) {
+      debugger
+      uploadModel(fileRaw).then(response => {
+        debugger
+        const msg = response.data
+        console.log(msg)
+      })
+    },
+    handleTarget(row) {
+      this.temp = Object.assign({}, row) // copy obj
     }
   }
 }
