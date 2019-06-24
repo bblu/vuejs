@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div style="float: left;">
     <input ref="model-upload-input" class="model-upload-input" type="file" accept=".las, .laz" @change="handleChange">
-    <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleClick">upload</el-button>
+    <el-button :loading="loading" style="margin-left:0px;" size="mini" type="primary" @click="handleClick">upload</el-button>
     <!--div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover"></div-->
   </div>
 </template>

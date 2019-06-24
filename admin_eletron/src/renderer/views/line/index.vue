@@ -13,7 +13,7 @@
           <el-table-column prop="name" label="name" width="160"></el-table-column>
           <el-table-column prop="height" label="height"></el-table-column>
           <el-table-column prop="width" label="width"></el-table-column>
-          <el-table-column label="Actions" align="center" width="260" class-name="small-padding fixed-width">
+          <el-table-column label="Actions" align="center" width="160" class-name="small-padding fixed-width">
           <template slot-scope="{row}">
             <upload-model-component :handle-upload="handleUpload" :before-upload="beforeUpload" />
             <el-button v-if="row.status!=null" size="mini" @click="handleTarget(row)">target</el-button>
