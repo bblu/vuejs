@@ -120,15 +120,16 @@ export default {
     },
     beforeUpload(file) {
       this.loading = true
-      const isLt1M = file.size / 1024 / 1024 < 1
-      if (isLt1M) {
-        return true
-      }
-      this.$message({
+      const notLt10M = file.size / 1024 / 1024 > 10
+      if (notLt10M) {
+        this.$message({
         message: 'Please do not upload files larger than 1m in size.',
         type: 'warning'
-      })
-      return false
+        })
+        return false
+      }
+
+      return true
     },
     handleUpload(fileRaw) {
       uploadModel(this.currentTower.id, fileRaw).then(response => {
