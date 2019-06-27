@@ -62,7 +62,8 @@ export default {
       }
       const before = this.beforeUpload(rawFile)
       if (before) {
-        this.readerData(rawFile)
+        this.handleUpload && this.handleUpload(rawFile)
+        // this.readerData(rawFile)
       }
     },
     readerData(rawFile) {
