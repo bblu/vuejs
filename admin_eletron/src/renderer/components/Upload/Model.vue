@@ -62,6 +62,7 @@ export default {
       }
       const before = this.beforeUpload(rawFile)
       if (before) {
+        // TODO get MD5
         this.handleUpload && this.handleUpload(rawFile)
         // this.readerData(rawFile)
       }

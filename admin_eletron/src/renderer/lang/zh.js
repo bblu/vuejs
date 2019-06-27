@@ -87,7 +87,7 @@ export default {
     size: '布局大小'
   },
   login: {
-    title: '电 网 巡 查',
+    title: '智 能 巡 检',
     login: '登录',
     username: '账号',
     password: '密码',

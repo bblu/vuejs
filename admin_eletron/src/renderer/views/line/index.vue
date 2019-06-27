@@ -8,7 +8,7 @@
         :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree"></el-tree>
       </el-aside>
       <el-main style="border: 1px solid #eee">
-        <el-table :data="tableData" v-loading.body="tableLoading" element-loading-text="Loading" >
+        <el-table :data="tableData" v-loading.body="tableLoading" element-loading-text="Loading" @row-click="onTableClick">
           <el-table-column prop="serial" label="serial" width="64"></el-table-column>
           <el-table-column prop="name" label="name" width="160"></el-table-column>
           <el-table-column prop="height" label="height"></el-table-column>
@@ -42,6 +42,7 @@ export default {
       treeData: null,
       tableData: null,
       currentLine: null,
+      currentTower: null,
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -101,6 +102,10 @@ export default {
       this.currentLine = row
       this.selectLine(row.id)
     },
+    onTableClick(row, event, column) {
+      this.currentTower = row
+      console.log('select tower ' + row.id)
+    },
     selectLine(lineId) {
       this.tableLoading = true
       const page = this
@@ -126,9 +131,7 @@ export default {
       return false
     },
     handleUpload(fileRaw) {
-      debugger
-      uploadModel(fileRaw).then(response => {
-        debugger
+      uploadModel(this.currentTower.id, fileRaw).then(response => {
         const msg = response.data
         console.log(msg)
       })

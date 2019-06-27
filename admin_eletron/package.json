@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "power-grid-admin",
+    "productName": "Grid-admin",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"

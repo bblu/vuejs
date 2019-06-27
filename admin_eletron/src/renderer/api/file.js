@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function uploadModel(data) {
+export function uploadModel(tower, data) {
   const formData = new FormData()
   formData.append('file', data)
   return request({
@@ -8,7 +8,7 @@ export function uploadModel(data) {
     method: 'post',
     headers: {
       'Content-Type': 'multipart/form-data',
-      'X-towerid': 7
+      'X-Tower': tower
     },
     data: formData
   })
