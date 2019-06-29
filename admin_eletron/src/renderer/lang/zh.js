@@ -1,7 +1,10 @@
 export default {
   route: {
     dashboard: '工作台',
-    line: '杆塔线路',
+    line: '线路杆塔',
+    type: '塔型管理',
+    lineTable: '杆塔列表',
+    pointCloud: '杆塔点云',
     fly: '智能飞行',
     data: '数据管理',
     upload: '飞行数据',

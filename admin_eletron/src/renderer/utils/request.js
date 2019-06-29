@@ -26,10 +26,10 @@ service.interceptors.response.use(
   /**
   * code为非200是抛错 可结合自己业务进行修改
   */
-    const res = response.data
-    if (res.code !== 200) {
+    if (response.status !== 200) {
+      const res = response.data
       Message({
-        message: res.message,
+        message: res.error || res.message,
         type: 'error',
         duration: 5 * 1000
       })

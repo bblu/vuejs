@@ -123,8 +123,8 @@ export default {
       const notLt10M = file.size / 1024 / 1024 > 10
       if (notLt10M) {
         this.$message({
-        message: 'Please do not upload files larger than 1m in size.',
-        type: 'warning'
+          message: 'Please do not upload files larger than 1m in size.',
+          type: 'warning'
         })
         return false
       }

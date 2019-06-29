@@ -39,12 +39,19 @@ export const constantRouterMap = [
   {
     path: '/line',
     component: Layout,
+    meta: { title: 'line', icon: 'example' },
     children: [
       {
-        path: 'index',
-        name: 'Line',
-        component: () => import('@/views/line/index'),
-        meta: { title: 'line', icon: 'form' }
+        path: 'table',
+        name: 'LineTable',
+        component: () => import('@/views/line/table'),
+        meta: { title: 'lineTable', icon: 'form' }
+      },
+      {
+        path: 'cloud',
+        name: 'PointCloud',
+        component: () => import('@/views/line/cloud'),
+        meta: { title: 'pointCloud', icon: 'form' }
       }
     ]
   },

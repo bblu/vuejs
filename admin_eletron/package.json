@@ -59,6 +59,7 @@
     "js-cookie": "^2.2.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "potree": "^0.1.0",
     "screenfull": "4.2.0",
     "showdown": "1.9.0",
     "sortablejs": "1.8.4",
@@ -113,5 +114,6 @@
     "webpack": "^3.5.2",
     "webpack-dev-server": "^2.7.1",
     "webpack-hot-middleware": "^2.18.2"
-  }
+  },
+  "__npminstall_done": false
 }

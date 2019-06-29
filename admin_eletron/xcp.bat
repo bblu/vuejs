@@ -1,0 +1,1 @@
+xcopy .\src D:\work\electron_vue\src /D /S /Y

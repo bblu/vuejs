@@ -1,7 +1,10 @@
 export default {
   route: {
     dashboard: 'Dashboard',
-    line: 'MapLine',
+    line: 'LineTower',
+    type: 'TowerType',
+    lineTable: 'LineTable',
+    pointCloud: 'PointCloud',
     fly: 'AI Fly',
     data: 'Fly Data',
     shape: 'MapShape',
