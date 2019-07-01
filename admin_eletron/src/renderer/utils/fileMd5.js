@@ -29,9 +29,8 @@ export function generatorFileMd5(file) {
   }
 
   function loadNext() {
-    var start = currentChunk * chunkSize,
-      end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize
-
+    const start = currentChunk * chunkSize
+    const end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize
     fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
   }
 

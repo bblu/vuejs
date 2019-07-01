@@ -8,18 +8,20 @@
         :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree"></el-tree>
       </el-aside>
       <el-main style="border: 1px solid #eee">
-        
+        <cloud-view></cloud-view>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
-
+import CloudView from '@/components/Cloudview'
 import { getList, getTower } from '@/api/line'
-import { uploadModel } from '@/api/file'
+
 export default {
-  components: {},
+  components: {
+    CloudView
+  },
   data() {
     return {
       list: null,
@@ -104,28 +106,6 @@ export default {
         page.tableData = towers
         page.tableLoading = false
       })
-    },
-    beforeUpload(file) {
-      this.loading = true
-      const notLt10M = file.size / 1024 / 1024 > 10
-      if (notLt10M) {
-        this.$message({
-          message: 'Please do not upload files larger than 1m in size.',
-          type: 'warning'
-        })
-        return false
-      }
-
-      return true
-    },
-    handleUpload(fileRaw) {
-      uploadModel(this.currentTower.id, fileRaw).then(response => {
-        const msg = response.data
-        console.log(msg)
-      })
-    },
-    handleTarget(row) {
-      this.temp = Object.assign({}, row) // copy obj
     }
   }
 }

@@ -1,39 +1,31 @@
 <template>
-  <div>
-    
+  <div class="potree_container" style="position: relative; width: 100%; height: 100%; left: 0px; top: 0px; ">
+    <div id="potree_render_area" ></div>
   </div>
 </template>
 
 <script>
 import Potree from 'potree'
+// import THREE from 'potree/libs/three.js/build/three.min.js'
 
 export default {
-  name: 'CloudView',
   components: {
+    Potree,
+    THREE
   },
+  props: [],
   data() {
     return {
       zoom: 13,
       center: 'L.latLng(40.0482567, 116.468478)',
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      marker: 'L.latLng(40.0482567, 116.468478)',
-      currentZoom: 11.5,
-      currentCenter: 'L.latLng(40.0482567, 116.468478)',
-      showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5
-      },
-      circle: {
-        center: 'L.latLng(40.0482567, 116.468478)',
-        radius: 4500
-      },
-      polyline: {
-        type: 'polyline',
-        latlngs: [[40.0482567, 116.468478], [40.1482567, 116.468479], [40.2482567, 116.468480], [40.0482567, 116.468481]],
-        color: 'green'
       }
     }
+  },
+  mounted() {
+    debugger
+    window.viewer = new Potree.Viewer(document.getElementById('potree_render_area'))
   },
   methods: {
     zoomUpdate(zoom) {
