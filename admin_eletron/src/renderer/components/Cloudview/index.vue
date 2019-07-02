@@ -5,13 +5,11 @@
 </template>
 
 <script>
-import Potree from 'potree'
+// import Potree from 'potree'
 // import THREE from 'potree/libs/three.js/build/three.min.js'
 
 export default {
   components: {
-    Potree,
-    THREE
   },
   props: [],
   data() {
@@ -26,6 +24,11 @@ export default {
   mounted() {
     debugger
     window.viewer = new Potree.Viewer(document.getElementById('potree_render_area'))
+    window.viewer.setEDLEnabled(true)
+    window.viewer.setFOV(60)
+    window.viewer.setPointBudget(5 * 1000 * 1000)
+    window.viewer.loadSettingsFromURL()
+    window.viewer.setDescription('')
   },
   methods: {
     zoomUpdate(zoom) {

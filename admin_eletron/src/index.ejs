@@ -9,6 +9,13 @@
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
       </script>
     <% } %>
+    <script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/other/BinaryHeap.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/other/stats.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/tween/tween.min.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/proj4/proj4.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/plasio/js/laslaz.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/libs/three.js/build/three.min.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/node_modules/potree/build/potree.js></script>
   </head>
   <body>
     <div id="app"></div>

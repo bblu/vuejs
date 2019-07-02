@@ -8,7 +8,7 @@
         :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree"></el-tree>
       </el-aside>
       <el-main style="border: 1px solid #eee">
-        <cloud-view></cloud-view>
+        <cloud-view>cloud-view</cloud-view>
       </el-main>
     </el-container>
   </div>
