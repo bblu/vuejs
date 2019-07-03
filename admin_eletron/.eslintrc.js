@@ -6,6 +6,7 @@ module.exports = {
   },
   env: {
     browser: true,
+    jquery: true,
     node: true,
     es6: true,
   },
@@ -133,7 +134,7 @@ module.exports = {
     'no-this-before-super': 2,
     'no-throw-literal': 2,
     'no-trailing-spaces': 2,
-    'no-undef': 2,
+    'no-undef': 0,
     'no-undef-init': 2,
     'no-unexpected-multiline': 2,
     'no-unmodified-loop-condition': 2,
@@ -143,7 +144,7 @@ module.exports = {
     'no-unreachable': 2,
     'no-unsafe-finally': 2,
     'no-unused-vars': [2, {
-      'vars': 'all',
+      'vars': 'local',
       'args': 'none'
     }],
     'no-useless-call': 2,

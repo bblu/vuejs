@@ -1,13 +1,13 @@
 <template>
   <div class="line-container">
-    <el-container style="height:600px; border: 1px solid #eee">
+    <el-container style="height:100%; border: 1px solid #eee">
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <el-input placeholder="Filter keyword" v-model="filterText" style="margin-bottom:1px;"></el-input>
         <el-tree class="filter-tree" :data="treeData" @node-click="onTreeClick" node-key = "id"
         v-loading.body="treeLoading" element-loading-text="Loading" 
         :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree"></el-tree>
       </el-aside>
-      <el-main style="border: 1px solid #eee">
+      <el-main class="point-container" style="border: 1px solid #eee">
         <cloud-view>cloud-view</cloud-view>
       </el-main>
     </el-container>
@@ -113,10 +113,15 @@ export default {
 
 <style scoped>
 .line-container {
-
   flex-direction: column;
   overflow: hidden;
-  height: 100%;
+  height: 100vh;
+}
+.point-container {
+  padding-top: 0px;
+  padding-right: 1px;
+  padding-bottom: 50px;
+  padding-left: 1px;
 }
 .filter-tree{
   background-color: #eee;
