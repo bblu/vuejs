@@ -54,7 +54,8 @@ export default {
 			
 			let line = new THREE.Line(geometry, material);
       viewer.scene.scene.add(line);
-      viewer.fitToScreen();
+      //viewer.fitToScreen();
+      viewer.zoomTo(line,1);
 		}
   
   },
