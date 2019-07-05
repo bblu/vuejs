@@ -10,9 +10,7 @@
 </template>
 
 <script>
-import $ from '@/assets/potree/jquery.min.js'
-// import Potree from '@/assets/potree/potree.js'
-// import THREE from 'potree/libs/three.js/build/three.min.js'
+import $ from '@/assets/potree/lib/jquery.min.js'
 
 export default {
   components: {},
@@ -32,11 +30,24 @@ export default {
     viewer.setFOV(60)
     viewer.setPointBudget(5 * 1000 * 1000)
     viewer.setDescription('Tower View')
-    // viewer.setBackground('gradient');
-    let scene = viewer.scene;
-    scene.view.position.set(589974.341, 231698.397, 986.146);
-		scene.view.lookAt(new THREE.Vector3(589851.587, 231428.213, 715.634));
+    viewer.setBackground('gradient');
+    let scene = viewer.scene
 
+    // Sigeom
+		Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+			viewer.scene.addPointCloud(e.pointcloud);
+			
+			let material = e.pointcloud.material;
+			material.size = 1;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			
+			e.pointcloud.position.x += 3;
+			e.pointcloud.position.y -= 3;
+			e.pointcloud.position.z += 4;
+			
+			viewer.fitToScreen();
+    })
+    
     { // add a polyline
 			let path = [
 				590058.52, 231354.16, 766.42,

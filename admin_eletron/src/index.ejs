@@ -9,13 +9,15 @@
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
       </script>
     <% } %>
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/js/BinaryHeap.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/js/stats.min.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/js/tween.min.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/js/proj4.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/js/laslaz.js></script>
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/js/three.min.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/BinaryHeap.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/stats.min.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/tween.min.js></script>
+		<!-- script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/proj4.js></script-->
+		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/laslaz.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/three.min.js></script>
+    <!--script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/jquery.min.js></script-->
     <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/potree.js></script>
+
   </head>
   <body>
     <div id="app"></div>
