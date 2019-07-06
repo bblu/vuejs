@@ -34,7 +34,8 @@ export default {
     let scene = viewer.scene
 
     // Sigeom
-		Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+		//Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+    Potree.loadPointCloud("../../../../static/tower/1124_53.las", "tower", function(e){
 			viewer.scene.addPointCloud(e.pointcloud);
 			
 			let material = e.pointcloud.material;

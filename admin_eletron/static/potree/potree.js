@@ -26036,6 +26036,16 @@ ENDSEC
 		// load pointcloud
 		if (!path){
 			// TODO: callback? comment? Hello? Bueller? Anyone?
+		} else if (path.indexOf('.la') > 0) {
+			POCLoader.load(path, function (geometry) {
+				if (!geometry) {
+					//callback({type: 'loading_failed'});
+					console.error(new Error(`failed to load point cloud from URL: ${path}`));
+				} else {
+					let pointcloud = new PointCloudOctree(geometry);
+					loaded(pointcloud);
+				}
+			});
 		} else if (path.indexOf('ept.json') > 0) {
 			Potree.EptLoader.load(path, function(geometry) {
 				if (!geometry) {
