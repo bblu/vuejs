@@ -86,3 +86,25 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+#potree_description{
+	position: absolute; 
+	top: 10px; 
+	left: 50%; 
+	transform: translateX(-50%); 
+	text-align: center;
+	z-index:	1000;
+}
+#potree_render_area{
+	position: 	absolute;
+	/*background: linear-gradient(-90deg, red, yellow);*/
+	top: 		0px;
+	bottom: 	0px;
+	left: 		0px;
+	right: 		0px;
+	overflow: 	hidden;
+	z-index: 	1;
+	-webkit-transition: left .35s;
+	transition: left .35s;
+}
+</style>

@@ -11,5 +11,5 @@ export default {
 </script>
 <style lang="scss">
   @import './styles/index.scss'; // 全局自定义的css样式
-  @import './assets/potree/potree.css'; // 点云css样式
+  //@import './assets/potree/potree.css'; // 点云css样式
 </style>

@@ -115,13 +115,10 @@ export default {
 .line-container {
   flex-direction: column;
   overflow: hidden;
-  height: 100vh;
+  height: calc(100vh - 50px);
 }
 .point-container {
-  padding-top: 0px;
-  padding-right: 1px;
-  padding-bottom: 50px;
-  padding-left: 1px;
+  padding: 0px;
 }
 .filter-tree{
   background-color: #eee;
