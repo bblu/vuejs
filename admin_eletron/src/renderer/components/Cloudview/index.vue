@@ -34,8 +34,8 @@ export default {
     let scene = viewer.scene
 
     // Sigeom
-		//Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
-    Potree.loadPointCloud("../../../../static/tower/1124_53.las", "tower", function(e){
+		//this.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+     this.loadPointCloud("../../../../static/tower/1124_53.las", "tower", function(e){
 			viewer.scene.addPointCloud(e.pointcloud);
 			
 			let material = e.pointcloud.material;
@@ -65,13 +65,37 @@ export default {
 			geometry.computeBoundingSphere();
 			
 			let line = new THREE.Line(geometry, material);
-      viewer.scene.scene.add(line);
-      //viewer.fitToScreen();
+      // viewer.scene.scene.add(line);
+      // viewer.fitToScreen();
       viewer.zoomTo(line,1);
 		}
   
   },
   methods: {
+    loadPointCloud(path, name, callback){
+      Potree.POCLoader.load(path, function (geometry) {
+				if (!geometry) {
+					//callback({type: 'loading_failed'});
+					console.error(new Error(`failed to load point cloud from URL: ${path}`));
+				} else {
+          let pointcloud = new Potree.PointCloudOctree(geometry);
+          pointcloud.name = name;
+					callback({type: 'pointcloud_loaded', pointcloud: pointcloud});
+				}
+      });
+    },
+    loadPointCloud2(path, name, callback){
+      Potree.POCLoader.load2(path, function (geometry) {
+				if (!geometry) {
+					//callback({type: 'loading_failed'});
+					console.error(new Error(`failed to load point cloud from URL: ${path}`));
+				} else {
+          let pointcloud = new Potree.PointCloudOctree(geometry);
+          pointcloud.name = name;
+					callback({type: 'pointcloud_loaded', pointcloud: pointcloud});
+				}
+      });
+    },
     zoomUpdate(zoom) {
       this.currentZoom = zoom
     },

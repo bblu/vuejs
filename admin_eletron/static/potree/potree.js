@@ -4195,7 +4195,9 @@
 			this.pcoGeometry = pcoGeometry;
 			this.geometry = null;
 			this.boundingBox = boundingBox;
-			this.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+			if(boundingBox){
+				this.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+			}
 			this.children = {};
 			this.numPoints = 0;
 			this.level = null;
@@ -12475,6 +12477,44 @@ void main() {
 	class POCLoader {
 
 		static load(url, callback){
+			try {
+				let pco = new PointCloudOctreeGeometry();
+				pco.url = url;
+				let version = new Version('1.4');
+				if (url.indexOf('.las') > 0 || url.indexOf('.laz') > 0) {
+					pco.loader = new LasLazLoader(version);
+				} else {
+					// TODO : error
+					console.log('Unknown file type' + url);
+					return null;
+				}
+						let nodes = {};
+						{ // load root
+							let name = 'r';
+							let root = new PointCloudOctreeGeometryNode(name, pco);
+							root.level = 0;
+							root.hasChildren = false;
+							root.spacing = pco.spacing;
+							if (version.upTo('1.5')) {
+								root.numPoints = 0; // fMno.hierarchy[0][1];
+							} else {
+								root.numPoints = 0;
+							}
+							pco.root = root;
+							pco.root.load();
+							nodes[name] = root;
+						}
+						callback(pco);
+
+				xhr.send(null);
+			} catch (e) {
+				console.log("loading failed: '" + url + "'");
+				console.log(e);
+
+				callback();
+			}
+		}
+		static load2(url, callback){
 			try {
 				let pco = new PointCloudOctreeGeometry();
 				pco.url = url;
@@ -26037,7 +26077,7 @@ ENDSEC
 		if (!path){
 			// TODO: callback? comment? Hello? Bueller? Anyone?
 		} else if (path.indexOf('.la') > 0) {
-			POCLoader.load(path, function (geometry) {
+			LasLazLoader.load(path, function (geometry) {
 				if (!geometry) {
 					//callback({type: 'loading_failed'});
 					console.error(new Error(`failed to load point cloud from URL: ${path}`));
