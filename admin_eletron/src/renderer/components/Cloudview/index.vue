@@ -34,18 +34,15 @@ export default {
     let scene = viewer.scene
 
     // Sigeom
-		//this.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
-     this.loadPointCloud("../../../../static/tower/1124_53.las", "tower", function(e){
+    //Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+    this.loadPointCloud("../../../../static/data/31.las", "31", function(e){
 			viewer.scene.addPointCloud(e.pointcloud);
-			
 			let material = e.pointcloud.material;
 			material.size = 1;
 			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-			
 			e.pointcloud.position.x += 3;
 			e.pointcloud.position.y -= 3;
 			e.pointcloud.position.z += 4;
-			
 			viewer.fitToScreen();
     })
     
@@ -73,7 +70,7 @@ export default {
   },
   methods: {
     loadPointCloud(path, name, callback){
-      Potree.POCLoader.load(path, function (geometry) {
+      Potree.POCLoader.loadSingle(path,name, function (geometry) {
 				if (!geometry) {
 					//callback({type: 'loading_failed'});
 					console.error(new Error(`failed to load point cloud from URL: ${path}`));
@@ -85,7 +82,7 @@ export default {
       });
     },
     loadPointCloud2(path, name, callback){
-      Potree.POCLoader.load2(path, function (geometry) {
+      Potree.POCLoader.load(path, function (geometry) {
 				if (!geometry) {
 					//callback({type: 'loading_failed'});
 					console.error(new Error(`failed to load point cloud from URL: ${path}`));
