@@ -132,7 +132,7 @@ export default {
       return true
     },
     handleUpload(fileRaw) {
-      uploadModel(this.currentTower.id, fileRaw).then(response => {
+      uploadModel(this.currentLine.id, this.currentTower.id, fileRaw).then(response => {
         const msg = response.data
         console.log(msg)
       })
