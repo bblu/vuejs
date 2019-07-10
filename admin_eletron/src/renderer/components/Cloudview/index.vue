@@ -38,8 +38,8 @@ export default {
   "scale": 0.001,
   "root": "3_1_0",
 	"hierarchy": [
-    ["3_1_0", 516152.81, 4010673.48, 149.15]
-		["3_1_1", 516152.86, 4010675.29, 164.93]
+    //{name:"3_1_0", min: [516152.81, 4010673.48, 149.15]},
+		{name:"3_1_1", min: [516152.86, 4010675.29, 164.93]}
 	]
 }
     }
@@ -56,16 +56,7 @@ export default {
     // Sigeom
     // Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
     //this.loadPointCloud("http://localhost:8080/static/3_1.json", "lion", function(e){
-    this.loadPointCloud(this.req, "31", function(e){
-			viewer.scene.addPointCloud(e.pointcloud);
-			let material = e.pointcloud.material;
-			material.size = 1;
-			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-			e.pointcloud.position.x += 3;
-			e.pointcloud.position.y -= 3;
-			e.pointcloud.position.z += 4;
-			viewer.fitToScreen();
-    })
+    this.loadPointCloud(this.req, viewer);
     
     { // add a polyline
 			let path = [
@@ -90,18 +81,9 @@ export default {
   
   },
   methods: {
-    loadPointCloud(path, name, callback){
+    loadPointCloud(path, viewer){
       const baseUrl = '../../../../static'
-      Potree.POCLoader.loadJson(baseUrl,path, function (geometry) {
-				if (!geometry) {
-					//callback({type: 'loading_failed'});
-					console.error(new Error(`failed to load point cloud from URL: ${path}`));
-				} else {
-          let pointcloud = new Potree.PointCloudOctree(geometry);
-          pointcloud.name = name;
-					callback({type: 'pointcloud_loaded', pointcloud: pointcloud});
-				}
-      });
+      Potree.POCLoader.loadJson(baseUrl,path, viewer);
     },
     loadPointCloud2(path, name, callback){
       Potree.POCLoader.load(path, function (geometry) {

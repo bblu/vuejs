@@ -3855,319 +3855,6 @@
 
 	PointCloudEptGeometryNode.IDCount = 0;
 
-	class PointCloudGreyhoundGeometry{
-
-		constructor(){
-			this.spacing = 0;
-			this.boundingBox = null;
-			this.root = null;
-			this.nodes = null;
-			this.pointAttributes = {};
-			this.hierarchyStepSize = -1;
-			this.loader = null;
-			this.schema = null;
-
-			this.baseDepth = null;
-			this.offset = null;
-			this.projection = null;
-
-			this.boundingSphere = null;
-
-			// the serverURL will contain the base URL of the greyhound server. f.e. http://dev.greyhound.io/resource/autzen/
-			this.serverURL = null;
-
-			this.normalize = { color: false, intensity: false };
-		}
-
-	};
-
-	class PointCloudGreyhoundGeometryNode$1 extends PointCloudTreeNode {
-		constructor(name, pcoGeometry, boundingBox, scale, offset) {
-			super();
-
-			this.id = Potree.PointCloudGreyhoundGeometryNode.IDCount++;
-			this.name = name;
-			this.index = parseInt(name.charAt(name.length - 1));
-			this.pcoGeometry = pcoGeometry;
-			this.geometry = null;
-			this.boundingBox = boundingBox;
-			this.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
-			this.scale = scale;
-			this.offset = offset;
-			this.children = {};
-			this.numPoints = 0;
-			this.level = null;
-			this.loaded = false;
-			this.oneTimeDisposeHandlers = [];
-			this.baseLoaded = false;
-
-			let bounds = this.boundingBox.clone();
-			bounds.min.sub(this.pcoGeometry.boundingBox.getCenter());
-			bounds.max.sub(this.pcoGeometry.boundingBox.getCenter());
-
-			if (this.scale) {
-				bounds.min.multiplyScalar(1 / this.scale);
-				bounds.max.multiplyScalar(1 / this.scale);
-			}
-
-			// This represents the bounds for this node in the reference frame of the
-			// global bounds from `info`, centered around the origin, and then scaled
-			// by our selected scale.
-			this.greyhoundBounds = bounds;
-
-			// This represents the offset between the coordinate system described above
-			// and our pcoGeometry bounds.
-			this.greyhoundOffset = this.pcoGeometry.offset.clone().add(
-				this.pcoGeometry.boundingBox.getSize().multiplyScalar(0.5)
-			);
-		}
-
-
-		isGeometryNode() { return true; }
-		isTreeNode() { return false; }
-		isLoaded() { return this.loaded; }
-		getBoundingSphere() { return this.boundingSphere; }
-		getBoundingBox() { return this.boundingBox; }
-		getLevel() { return this.level; };
-		getChildren() {
-			let children = [];
-
-			for (let i = 0; i < 8; ++i) {
-				if (this.children[i]) {
-					children.push(this.children[i]);
-				}
-			}
-
-			return children;
-		}
-
-		getURL() {
-			let schema = this.pcoGeometry.schema;
-			let bounds = this.greyhoundBounds;
-
-			let boundsString =
-						bounds.min.x + ',' + bounds.min.y + ',' + bounds.min.z + ',' +
-						bounds.max.x + ',' + bounds.max.y + ',' + bounds.max.z;
-
-			let url = '' + this.pcoGeometry.serverURL +
-						'read?depthBegin=' +
-						(this.baseLoaded ?
-							(this.level + this.pcoGeometry.baseDepth) : 0) +
-						'&depthEnd=' + (this.level + this.pcoGeometry.baseDepth + 1) +
-						'&bounds=[' + boundsString + ']' +
-						'&schema=' + JSON.stringify(schema) +
-						'&compress=true';
-
-			if (this.scale) {
-				url += '&scale=' + this.scale;
-			}
-
-			if (this.greyhoundOffset) {
-				let offset = this.greyhoundOffset;
-				url += '&offset=[' + offset.x + ',' + offset.y + ',' + offset.z + ']';
-			}
-
-			if (!this.baseLoaded) this.baseLoaded = true;
-
-			return url;
-		};
-
-		addChild(child) {
-			this.children[child.index] = child;
-			child.parent = this;
-		};
-
-		load() {
-			if (
-				this.loading === true ||
-				this.loaded === true ||
-				Potree.numNodesLoading >= Potree.maxNodesLoading) {
-				return;
-			}
-
-			this.loading = true;
-			Potree.numNodesLoading++;
-
-			if (
-				this.level % this.pcoGeometry.hierarchyStepSize === 0 &&
-				this.hasChildren) {
-				this.loadHierarchyThenPoints();
-			} else {
-				this.loadPoints();
-			}
-		}
-
-		loadPoints() { this.pcoGeometry.loader.load(this); };
-
-		loadHierarchyThenPoints() {
-			// From Greyhound (Cartesian) ordering for the octree to Potree-default
-			let transform = [0, 2, 1, 3, 4, 6, 5, 7];
-
-			let makeBitMask = function (node) {
-				let mask = 0;
-				Object.keys(node).forEach(function (key) {
-					if (key === 'swd') mask += 1 << transform[0];
-					else if (key === 'nwd') mask += 1 << transform[1];
-					else if (key === 'swu') mask += 1 << transform[2];
-					else if (key === 'nwu') mask += 1 << transform[3];
-					else if (key === 'sed') mask += 1 << transform[4];
-					else if (key === 'ned') mask += 1 << transform[5];
-					else if (key === 'seu') mask += 1 << transform[6];
-					else if (key === 'neu') mask += 1 << transform[7];
-				});
-				return mask;
-			};
-
-			let parseChildrenCounts = function (base, parentName, stack) {
-				let keys = Object.keys(base);
-				let child;
-				let childName;
-
-				keys.forEach(function (key) {
-					if (key === 'n') return;
-					switch (key) {
-						case 'swd':
-							child = base.swd; childName = parentName + transform[0];
-							break;
-						case 'nwd':
-							child = base.nwd; childName = parentName + transform[1];
-							break;
-						case 'swu':
-							child = base.swu; childName = parentName + transform[2];
-							break;
-						case 'nwu':
-							child = base.nwu; childName = parentName + transform[3];
-							break;
-						case 'sed':
-							child = base.sed; childName = parentName + transform[4];
-							break;
-						case 'ned':
-							child = base.ned; childName = parentName + transform[5];
-							break;
-						case 'seu':
-							child = base.seu; childName = parentName + transform[6];
-							break;
-						case 'neu':
-							child = base.neu; childName = parentName + transform[7];
-							break;
-						default:
-							break;
-					}
-
-					stack.push({
-						children: makeBitMask(child),
-						numPoints: child.n,
-						name: childName
-					});
-
-					parseChildrenCounts(child, childName, stack);
-				});
-			};
-
-			// Load hierarchy.
-			let callback = function (node, greyhoundHierarchy) {
-				let decoded = [];
-				node.numPoints = greyhoundHierarchy.n;
-				parseChildrenCounts(greyhoundHierarchy, node.name, decoded);
-
-				let nodes = {};
-				nodes[node.name] = node;
-				let pgg = node.pcoGeometry;
-
-				for (let i = 0; i < decoded.length; i++) {
-					let name = decoded[i].name;
-					let numPoints = decoded[i].numPoints;
-					let index = parseInt(name.charAt(name.length - 1));
-					let parentName = name.substring(0, name.length - 1);
-					let parentNode = nodes[parentName];
-					let level = name.length - 1;
-					let boundingBox = Potree.GreyhoundLoader.createChildAABB(
-						parentNode.boundingBox, index);
-
-					let currentNode = new Potree.PointCloudGreyhoundGeometryNode(
-						name, pgg, boundingBox, node.scale, node.offset);
-
-					currentNode.level = level;
-					currentNode.numPoints = numPoints;
-					currentNode.hasChildren = decoded[i].children > 0;
-					currentNode.spacing = pgg.spacing / Math.pow(2, level);
-					parentNode.addChild(currentNode);
-					nodes[name] = currentNode;
-				}
-
-				node.loadPoints();
-			};
-
-			if (this.level % this.pcoGeometry.hierarchyStepSize === 0) {
-				let depthBegin = this.level + this.pcoGeometry.baseDepth;
-				let depthEnd = depthBegin + this.pcoGeometry.hierarchyStepSize + 2;
-
-				let bounds = this.greyhoundBounds;
-
-				let boundsString =
-					bounds.min.x + ',' + bounds.min.y + ',' + bounds.min.z + ',' +
-					bounds.max.x + ',' + bounds.max.y + ',' + bounds.max.z;
-
-				let hurl = '' + this.pcoGeometry.serverURL +
-					'hierarchy?bounds=[' + boundsString + ']' +
-					'&depthBegin=' + depthBegin +
-					'&depthEnd=' + depthEnd;
-
-				if (this.scale) {
-					hurl += '&scale=' + this.scale;
-				}
-
-				if (this.greyhoundOffset) {
-					let offset = this.greyhoundOffset;
-					hurl += '&offset=[' + offset.x + ',' + offset.y + ',' + offset.z + ']';
-				}
-
-				let xhr = Potree.XHRFactory.createXMLHttpRequest();
-				xhr.open('GET', hurl, true);
-
-				let that = this;
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === 4) {
-						if (xhr.status === 200 || xhr.status === 0) {
-							let greyhoundHierarchy = JSON.parse(xhr.responseText) || { };
-							callback(that, greyhoundHierarchy);
-						} else {
-							console.log(
-								'Failed to load file! HTTP status:', xhr.status,
-								'file:', hurl
-							);
-						}
-					}
-				};
-
-				try {
-					xhr.send(null);
-				} catch (e) {
-					console.log('fehler beim laden der punktwolke: ' + e);
-				}
-			}
-		}
-
-		getNumPoints() { return this.numPoints; };
-
-		dispose() {
-			if (this.geometry && this.parent != null) {
-				this.geometry.dispose();
-				this.geometry = null;
-				this.loaded = false;
-
-				// this.dispatchEvent( { type: 'dispose' } );
-				for (let i = 0; i < this.oneTimeDisposeHandlers.length; i++) {
-					let handler = this.oneTimeDisposeHandlers[i];
-					handler();
-				}
-				this.oneTimeDisposeHandlers = [];
-			}
-		}
-	};
-
-	PointCloudGreyhoundGeometryNode$1.IDCount = 0;
-
 	class PointCloudOctreeGeometry{
 
 		constructor(){
@@ -8051,7 +7738,7 @@ void main() {
 
 			sceneNode.position.copy(geometryNode.boundingBox.min);
 			// bblu
-			console.log('set sceneNode.position = ' + sceneNode.position);
+			console.log('set sceneNode.position = ' + sceneNode.position.x+','+ sceneNode.position.x+','+ sceneNode.position.x+')');
 
 			sceneNode.frustumCulled = false;
 			sceneNode.onBeforeRender = (_this, scene, camera, geometry, material, group) => {
@@ -12507,23 +12194,23 @@ void main() {
 				}
 				console.log("loading '" + url + "'...");
 				pco.pointAttributes = 'LAS';
-						let nodes = {};
-						{ // load root
-							// let name = 'r';
-							let root = new PointCloudOctreeGeometryNode(name, pco);
-							root.level = 0;
-							root.hasChildren = false;
-							root.spacing = pco.spacing;
-							if (version.upTo('1.5')) {
-								root.numPoints = 0; // fMno.hierarchy[0][1];
-							} else {
-								root.numPoints = 0;
-							}
-							pco.root = root;
-							pco.root.load();
-							nodes[name] = root;
-						}
-						callback(pco);
+				let nodes = {};
+				{ // load root
+					// let name = 'r';
+					let root = new PointCloudOctreeGeometryNode(name, pco);
+					root.level = 0;
+					root.hasChildren = false;
+					root.spacing = pco.spacing;
+					if (version.upTo('1.5')) {
+						root.numPoints = 0; // fMno.hierarchy[0][1];
+					} else {
+						root.numPoints = 0;
+					}
+					pco.root = root;
+					pco.root.load();
+					nodes[name] = root;
+				}
+				callback(pco);
 			} catch (e) {
 				console.log("loading failed: '" + url + "'");
 				console.log(e);
@@ -12532,96 +12219,162 @@ void main() {
 			}
 		}
 		// added by bblu @ 2019-7-10 
-		static loadJson(url,fMno, callback){
+		static loadJson(url,fMno, viewer){
 			try {
-				let pco = new PointCloudOctreeGeometry();
-				pco.url = url;
+				
+				let min = new THREE.Vector3(fMno.boundingBox.lx, fMno.boundingBox.ly, fMno.boundingBox.lz);
+				let max = new THREE.Vector3(fMno.boundingBox.ux, fMno.boundingBox.uy, fMno.boundingBox.uz);
+				let boundingBox = new THREE.Box3(min, max);
+				let tightBoundingBox = boundingBox.clone();
 
-						let version = new Version(fMno.version);
+				if (fMno.tightBoundingBox) {
+					tightBoundingBox.min.copy(new THREE.Vector3(fMno.tightBoundingBox.lx, fMno.tightBoundingBox.ly, fMno.tightBoundingBox.lz));
+					tightBoundingBox.max.copy(new THREE.Vector3(fMno.tightBoundingBox.ux, fMno.tightBoundingBox.uy, fMno.tightBoundingBox.uz));
+				}
+				
 
-						// assume octreeDir is absolute if it starts with http
-						if (fMno.octreeDir.indexOf('http') === 0) {
-							pco.octreeDir = fMno.octreeDir;
-						} else {
-							pco.octreeDir = pco.url+ '/' + fMno.octreeDir;
-						}
+				let version = new Version(fMno.version);
+				let octreeDir = url + '/' + fMno.octreeDir;
 
-						pco.spacing = fMno.spacing;
-						pco.hierarchyStepSize = fMno.hierarchyStepSize;
+				let pcoGeo = new PointCloudOctreeGeometry();
+				pcoGeo.url = url;
+				pcoGeo.octreeDir = octreeDir;
+				pcoGeo.spacing = fMno.spacing;
+				pcoGeo.hierarchyStepSize = fMno.hierarchyStepSize;
 
-						pco.pointAttributes = fMno.pointAttributes;
+				pcoGeo.pointAttributes = fMno.pointAttributes;
 
-						let min = new THREE.Vector3(fMno.boundingBox.lx, fMno.boundingBox.ly, fMno.boundingBox.lz);
-						let max = new THREE.Vector3(fMno.boundingBox.ux, fMno.boundingBox.uy, fMno.boundingBox.uz);
-						let boundingBox = new THREE.Box3(min, max);
-						let tightBoundingBox = boundingBox.clone();
 
-						if (fMno.tightBoundingBox) {
-							tightBoundingBox.min.copy(new THREE.Vector3(fMno.tightBoundingBox.lx, fMno.tightBoundingBox.ly, fMno.tightBoundingBox.lz));
-							tightBoundingBox.max.copy(new THREE.Vector3(fMno.tightBoundingBox.ux, fMno.tightBoundingBox.uy, fMno.tightBoundingBox.uz));
-						}
+				let offset = min.clone();
 
-						let offset = min.clone();
+				boundingBox.min.sub(offset);
+				boundingBox.max.sub(offset);
 
-						boundingBox.min.sub(offset);
-						boundingBox.max.sub(offset);
+				tightBoundingBox.min.sub(offset);
+				tightBoundingBox.max.sub(offset);
 
-						tightBoundingBox.min.sub(offset);
-						tightBoundingBox.max.sub(offset);
+				pcoGeo.projection = fMno.projection;
+				pcoGeo.boundingBox = boundingBox;
+				pcoGeo.tightBoundingBox = tightBoundingBox;
+				pcoGeo.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+				pcoGeo.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
+				pcoGeo.offset = offset;
+				if (fMno.pointAttributes === 'LAS') {
+					pcoGeo.loader = new LasLazLoader(fMno.version);
+				} else if (fMno.pointAttributes === 'LAZ') {
+					pcoGeo.loader = new LasLazLoader(fMno.version);
+				} else {
+					pcoGeo.loader = new BinaryLoader(fMno.version, boundingBox, fMno.scale);
+					pcoGeo.pointAttributes = new PointAttributes(pcoGeo.pointAttributes);
+				}
 
-						pco.projection = fMno.projection;
-						pco.boundingBox = boundingBox;
-						pco.tightBoundingBox = tightBoundingBox;
-						pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
-						pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
-						pco.offset = offset;
-						if (fMno.pointAttributes === 'LAS') {
-							pco.loader = new LasLazLoader(fMno.version);
-						} else if (fMno.pointAttributes === 'LAZ') {
-							pco.loader = new LasLazLoader(fMno.version);
-						} else {
-							pco.loader = new BinaryLoader(fMno.version, boundingBox, fMno.scale);
-							pco.pointAttributes = new PointAttributes(pco.pointAttributes);
-						}
+				let nodes = {};
+				let name = fMno.root;
+				// load root first
+				let root = new PointCloudOctreeGeometryNode(name, pcoGeo, boundingBox);
+				root.level = 0;
+				root.hasChildren = true;
+				root.spacing = pcoGeo.spacing;
+				pcoGeo.root = root;
+				pcoGeo.root.load();
+				nodes[name] = root;
 
-						let nodes = {};
+				// load remaining hierarchy
+				for (let pc of fMno.hierarchy) {
+					let name = pc.name;
+					let curMin = new THREE.Vector3(pc.min[0],pc.min[1],pc.min[2])
+					let curBox = new THREE.Box3(curMin, max);
+					let node = new PointCloudOctreeGeometryNode(name, pcoGeo, curBox);
+					node.level = 1;
+					node.spacing = root.spacing;// / Math.pow(2, level);
+					root.addChild(node);
+					nodes[name] = node;
+				}
+				pcoGeo.nodes = nodes;
 
-						{ // load root first
-							let name = fMno.root;
+				//callback(pcoGeo);
+				let pointcloud = new Potree.PointCloudOctree(pcoGeo);
+				pointcloud.name = name;
+				viewer.scene.addPointCloud(pointcloud);
+				let material = pointcloud.material;
+				material.size = 1;
+				material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+				viewer.fitToScreen();
 
-							let root = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
-							root.level = 0;
-							root.hasChildren = true;
-							root.spacing = pco.spacing;
-							pco.root = root;
-							pco.root.load();
-							nodes[name] = root;
-						}
-
-						// load remaining hierarchy
-						if (version.upTo('1.4')) {
-							for (let i = 1; i < fMno.hierarchy.length; i++) {
-								let name = fMno.hierarchy[i][0];
-								let numPoints = fMno.hierarchy[i][1];
-								let parentName = fMno.root;
-								let parentNode = nodes[parentName];
-								let node = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
-								node.level = 0;
-								//node.numPoints = numPoints;
-								node.spacing = pco.spacing / Math.pow(2, node.level);
-								parentNode.addChild(node);
-								nodes[name] = node;
-							}
-						}
-
-						pco.nodes = nodes;
-
-						callback(pco);
-					
 			} catch (e) {
 				console.log("loading failed: '" + url + "'");
 				console.log(e);
+				//callback();
+			}
+		}
+		static loadJsonImp(url,fMno, callback){
+			try {
+				let version = new Version(fMno.version);
+				let min = new THREE.Vector3(fMno.boundingBox.lx, fMno.boundingBox.ly, fMno.boundingBox.lz);
+				let max = new THREE.Vector3(fMno.boundingBox.ux, fMno.boundingBox.uy, fMno.boundingBox.uz);
+				let boundingBox = new THREE.Box3(min, max);
+				let tightBoundingBox = boundingBox.clone();
 
+				if (fMno.tightBoundingBox) {
+					tightBoundingBox.min.copy(new THREE.Vector3(fMno.tightBoundingBox.lx, fMno.tightBoundingBox.ly, fMno.tightBoundingBox.lz));
+					tightBoundingBox.max.copy(new THREE.Vector3(fMno.tightBoundingBox.ux, fMno.tightBoundingBox.uy, fMno.tightBoundingBox.uz));
+				}
+
+				let offset = min.clone();
+
+				let nodes = {};
+				for (let pc of fMno.hierarchy) {
+					let name = pc.name;
+					let curMin = new THREE.Vector3(pc.min[0],pc.min[1],pc.min[2])
+					let pco = new PointCloudOctreeGeometry();
+					pco.url = url;
+					// assume octreeDir is absolute if it starts with http
+					if (fMno.octreeDir.indexOf('http') === 0) {
+						pco.octreeDir = fMno.octreeDir;
+					} else {
+						pco.octreeDir = pco.url + '/' + fMno.octreeDir;
+					}
+					pco.projection = fMno.projection;
+
+					pco.spacing = fMno.spacing;
+					pco.hierarchyStepSize = fMno.hierarchyStepSize;
+					pco.pointAttributes = fMno.pointAttributes;
+
+					boundingBox = new THREE.Box3(curMin, max);
+					offset = curMin.clone();
+					boundingBox.min.sub(offset);
+					boundingBox.max.sub(offset);
+	
+					tightBoundingBox.min.sub(offset);
+					tightBoundingBox.max.sub(offset);
+
+					pco.boundingBox = boundingBox;
+					pco.tightBoundingBox = tightBoundingBox;
+					pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+					pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
+					pco.offset = offset;
+					if (fMno.pointAttributes === 'LAS'||fMno.pointAttributes === 'LAZ') {
+						pco.loader = new LasLazLoader(fMno.version);
+					} else {
+						pco.loader = new BinaryLoader(fMno.version, boundingBox, fMno.scale);
+						pco.pointAttributes = new PointAttributes(pco.pointAttributes);
+					}
+
+					{ // load root first
+						let root = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
+						root.level = 0;
+						root.hasChildren = false;
+						root.spacing = pco.spacing;
+						pco.root = root;
+						pco.root.load();
+						nodes[name] = root;
+					}
+					//pco.nodes = nodes;
+					callback(pco);
+				}
+			} catch (e) {
+				console.log("loading failed: '" + url + "'");
+				console.log(e);
 				callback();
 			}
 		}
@@ -13085,497 +12838,6 @@ void main() {
 	        return Potree.scriptPath + '/workers/EptZstandardDecoderWorker.js';
 	    }
 	};
-
-	class GreyhoundBinaryLoader{
-
-		constructor(version, boundingBox, scale){
-			if (typeof (version) === 'string') {
-				this.version = new Version(version);
-			} else {
-				this.version = version;
-			}
-
-			this.boundingBox = boundingBox;
-			this.scale = scale;
-		}
-
-		load(node){
-			if (node.loaded) return;
-
-			let scope = this;
-			let url = node.getURL();
-
-			let xhr = XHRFactory.createXMLHttpRequest();
-			xhr.open('GET', url, true);
-			xhr.responseType = 'arraybuffer';
-			xhr.overrideMimeType('text/plain; charset=x-user-defined');
-
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState === 4) {
-					if (xhr.status === 200 || xhr.status === 0) {
-						let buffer = xhr.response;
-						scope.parse(node, buffer);
-					} else {
-						console.log(
-							'Failed to load file! HTTP status:', xhr.status,
-							'file:', url);
-					}
-				}
-			};
-
-			try {
-				xhr.send(null);
-			} catch (e) {
-				console.log('error loading point cloud: ' + e);
-			}
-		}
-
-		parse(node, buffer){
-			let NUM_POINTS_BYTES = 4;
-
-			let view = new DataView(
-				buffer, buffer.byteLength - NUM_POINTS_BYTES, NUM_POINTS_BYTES);
-			let numPoints = view.getUint32(0, true);
-			let pointAttributes = node.pcoGeometry.pointAttributes;
-
-			node.numPoints = numPoints;
-
-			let workerPath = Potree.scriptPath + '/workers/GreyhoundBinaryDecoderWorker.js';
-			let worker = Potree.workerPool.getWorker(workerPath);
-
-			worker.onmessage = function (e) {
-
-				let data = e.data;
-				let buffers = data.attributeBuffers;
-				let tightBoundingBox = new THREE.Box3(
-					new THREE.Vector3().fromArray(data.tightBoundingBox.min),
-					new THREE.Vector3().fromArray(data.tightBoundingBox.max)
-				);
-
-				Potree.workerPool.returnWorker(workerPath, worker);
-
-				let geometry = new THREE.BufferGeometry();
-
-				for(let property in buffers){
-					let buffer = buffers[property].buffer;
-
-					if (parseInt(property) === PointAttributeNames.POSITION_CARTESIAN) {
-						geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(buffer), 3));
-					} else if (parseInt(property) === PointAttributeNames.COLOR_PACKED) {
-						geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(buffer), 4, true));
-					} else if (parseInt(property) === PointAttributeNames.INTENSITY) {
-						geometry.addAttribute('intensity', new THREE.BufferAttribute(new Float32Array(buffer), 1));
-					} else if (parseInt(property) === PointAttributeNames.CLASSIFICATION) {
-						geometry.addAttribute('classification', new THREE.BufferAttribute(new Uint8Array(buffer), 1));
-					} else if (parseInt(property) === PointAttributeNames.NORMAL_SPHEREMAPPED) {
-						geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(buffer), 3));
-					} else if (parseInt(property) === PointAttributeNames.NORMAL_OCT16) {
-						geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(buffer), 3));
-					} else if (parseInt(property) === PointAttributeNames.NORMAL) {
-						geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(buffer), 3));
-					} else if (parseInt(property) === PointAttributeNames.INDICES) {
-						let bufferAttribute = new THREE.BufferAttribute(new Uint8Array(buffer), 4);
-						bufferAttribute.normalized = true;
-						geometry.addAttribute('indices', bufferAttribute);
-					} else if (parseInt(property) === PointAttributeNames.SPACING) {
-						let bufferAttribute = new THREE.BufferAttribute(new Float32Array(buffer), 1);
-						geometry.addAttribute('spacing', bufferAttribute);
-					}
-				}
-
-				tightBoundingBox.max.sub(tightBoundingBox.min);
-				tightBoundingBox.min.set(0, 0, 0);
-
-				node.numPoints = data.numPoints;
-				node.geometry = geometry;
-				node.mean = new THREE.Vector3(...data.mean);
-				node.tightBoundingBox = tightBoundingBox;
-				node.loaded = true;
-				node.loading = false;
-				Potree.numNodesLoading--;
-			};
-
-			let bb = node.boundingBox;
-			let nodeOffset = node.pcoGeometry.boundingBox.getCenter(new THREE.Vector3()).sub(node.boundingBox.min);
-
-			let message = {
-				buffer: buffer,
-				pointAttributes: pointAttributes,
-				version: this.version.version,
-				schema: node.pcoGeometry.schema,
-				min: [bb.min.x, bb.min.y, bb.min.z],
-				max: [bb.max.x, bb.max.y, bb.max.z],
-				offset: nodeOffset.toArray(),
-				scale: this.scale,
-				normalize: node.pcoGeometry.normalize
-			};
-
-			worker.postMessage(message, [message.buffer]);
-		}
-
-	}
-
-	/**
-	 * @class Loads greyhound metadata and returns a PointcloudOctree
-	 *
-	 * @author Maarten van Meersbergen
-	 * @author Oscar Martinez Rubi
-	 * @author Connor Manning
-	 */
-
-	class GreyhoundUtils {
-		static getQueryParam (name) {
-			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-			let results = regex.exec(window.location.href);
-			if (!results) return null;
-			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, ' '));
-		}
-
-		static createSchema (attributes) {
-			let schema = [
-				{ 'name': 'X', 'size': 4, 'type': 'signed' },
-				{ 'name': 'Y', 'size': 4, 'type': 'signed' },
-				{ 'name': 'Z', 'size': 4, 'type': 'signed' }
-			];
-
-			// Once we include options in the UI to load a dynamic list of available
-			// attributes for visualization (f.e. Classification, Intensity etc.)
-			// we will be able to ask for that specific attribute from the server,
-			// where we are now requesting all attributes for all points all the time.
-			// If we do that though, we also need to tell Potree to redraw the points
-			// that are already loaded (with different attributes).
-			// This is not default behaviour.
-			attributes.forEach(function (item) {
-				if (item === 'COLOR_PACKED') {
-					schema.push({ 'name': 'Red', 'size': 2, 'type': 'unsigned' });
-					schema.push({ 'name': 'Green', 'size': 2, 'type': 'unsigned' });
-					schema.push({ 'name': 'Blue', 'size': 2, 'type': 'unsigned' });
-				} else if (item === 'INTENSITY') {
-					schema.push({ 'name': 'Intensity', 'size': 2, 'type': 'unsigned' });
-				} else if (item === 'CLASSIFICATION') {
-					schema.push({ 'name': 'Classification', 'size': 1, 'type': 'unsigned' });
-				}
-			});
-
-			return schema;
-		}
-
-		static fetch (url, cb) {
-			let xhr = XHRFactory.createXMLHttpRequest();
-			xhr.open('GET', url, true);
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState === 4) {
-					if (xhr.status === 200 || xhr.status === 0) {
-						cb(null, xhr.responseText);
-					} else {
-						cb(xhr.responseText);
-					}
-				}
-			};
-			xhr.send(null);
-		};
-
-		static fetchBinary (url, cb) {
-			let xhr = XHRFactory.createXMLHttpRequest();
-			xhr.open('GET', url, true);
-			xhr.responseType = 'arraybuffer';
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState === 4) {
-					if (xhr.status === 200 || xhr.status === 0) {
-						cb(null, xhr.response);
-					}				else {
-						cb(xhr.responseText);
-					}
-				}
-			};
-			xhr.send(null);
-		};
-
-		static pointSizeFrom (schema) {
-			return schema.reduce((p, c) => p + c.size, 0);
-		};
-
-		static getNormalization (serverURL, baseDepth, cb) {
-			let s = [
-				{ 'name': 'X', 'size': 4, 'type': 'floating' },
-				{ 'name': 'Y', 'size': 4, 'type': 'floating' },
-				{ 'name': 'Z', 'size': 4, 'type': 'floating' },
-				{ 'name': 'Red', 'size': 2, 'type': 'unsigned' },
-				{ 'name': 'Green', 'size': 2, 'type': 'unsigned' },
-				{ 'name': 'Blue', 'size': 2, 'type': 'unsigned' },
-				{ 'name': 'Intensity', 'size': 2, 'type': 'unsigned' }
-			];
-
-			let url = serverURL + 'read?depth=' + baseDepth +
-				'&schema=' + JSON.stringify(s);
-
-			GreyhoundUtils.fetchBinary(url, function (err, buffer) {
-				if (err) throw new Error(err);
-
-				let view = new DataView(buffer);
-				let numBytes = buffer.byteLength - 4;
-				// TODO Unused: let numPoints = view.getUint32(numBytes, true);
-				let pointSize = GreyhoundUtils.pointSizeFrom(s);
-
-				let colorNorm = false;
-				let intensityNorm = false;
-
-				for (let offset = 0; offset < numBytes; offset += pointSize) {
-					if (view.getUint16(offset + 12, true) > 255 ||
-						view.getUint16(offset + 14, true) > 255 ||
-						view.getUint16(offset + 16, true) > 255) {
-						colorNorm = true;
-					}
-
-					if (view.getUint16(offset + 18, true) > 255) {
-						intensityNorm = true;
-					}
-
-					if (colorNorm && intensityNorm) break;
-				}
-
-				if (colorNorm) console.log('Normalizing color');
-				if (intensityNorm) console.log('Normalizing intensity');
-
-				cb(null, { color: colorNorm, intensity: intensityNorm });
-			});
-		};
-	};
-
-
-	class GreyhoundLoader{
-
-		constructor(){
-
-		}
-
-		//loadInfoJSON(url, callback) {
-		//}
-
-		/**
-		 * @return a point cloud octree with the root node data loaded.
-		 * loading of descendants happens asynchronously when they're needed
-		 *
-		 * @param url
-		 * @param loadingFinishedListener executed after loading the binary has been
-		 * finished
-		 */
-		static load(url, callback){
-			let HIERARCHY_STEP_SIZE = 5;
-
-			try {
-				// We assume everything ater the string 'greyhound://' is the server url
-				let serverURL = url.split('greyhound://')[1];
-				if (serverURL.split('http://').length === 1 && serverURL.split('https://').length === 1) {
-					serverURL = 'http://' + serverURL;
-				}
-
-				GreyhoundUtils.fetch(serverURL + 'info', function (err, data) {
-					if (err) throw new Error(err);
-
-					/* We parse the result of the info query, which should be a JSON
-					* datastructure somewhat like:
-					{
-						"bounds": [635577, 848882, -1000, 639004, 853538, 2000],
-						"numPoints": 10653336,
-						"schema": [
-							{ "name": "X", "size": 8, "type": "floating" },
-							{ "name": "Y", "size": 8, "type": "floating" },
-							{ "name": "Z", "size": 8, "type": "floating" },
-							{ "name": "Intensity", "size": 2, "type": "unsigned" },
-							{ "name": "OriginId", "size": 4, "type": "unsigned" },
-							{ "name": "Red", "size": 2, "type": "unsigned" },
-							{ "name": "Green", "size": 2, "type": "unsigned" },
-							{ "name": "Blue", "size": 2, "type": "unsigned" }
-						],
-						"srs": "<omitted for brevity>",
-						"type": "octree"
-					}
-					*/
-					let greyhoundInfo = JSON.parse(data);
-					let version = new Version('1.4');
-
-					let bounds = greyhoundInfo.bounds;
-					// TODO Unused: let boundsConforming = greyhoundInfo.boundsConforming;
-
-					// TODO Unused: let width = bounds[3] - bounds[0];
-					// TODO Unused: let depth = bounds[4] - bounds[1];
-					// TODO Unused: let height = bounds[5] - bounds[2];
-					// TODO Unused: let radius = width / 2;
-					let scale = greyhoundInfo.scale || 0.01;
-					if (Array.isArray(scale)) {
-						scale = Math.min(scale[0], scale[1], scale[2]);
-					}
-
-					if (GreyhoundUtils.getQueryParam('scale')) {
-						scale = parseFloat(GreyhoundUtils.getQueryParam('scale'));
-					}
-
-					let baseDepth = Math.max(8, greyhoundInfo.baseDepth);
-
-					// Ideally we want to change this bit completely, since
-					// greyhound's options are wider than the default options for
-					// visualizing pointclouds. If someone ever has time to build a
-					// custom ui element for greyhound, the schema options from
-					// this info request should be given to the UI, so the user can
-					// choose between them. The selected option can then be
-					// directly requested from the server in the
-					// PointCloudGreyhoundGeometryNode without asking for
-					// attributes that we are not currently visualizing.  We assume
-					// XYZ are always available.
-					let attributes = ['POSITION_CARTESIAN'];
-
-					// To be careful, we only add COLOR_PACKED as an option if all
-					// colors are actually found.
-					let red = false;
-					let green = false;
-					let blue = false;
-
-					greyhoundInfo.schema.forEach(function (entry) {
-						// Intensity and Classification are optional.
-						if (entry.name === 'Intensity') {
-							attributes.push('INTENSITY');
-						}
-						if (entry.name === 'Classification') {
-							attributes.push('CLASSIFICATION');
-						}
-
-						if (entry.name === 'Red') red = true;
-						else if (entry.name === 'Green') green = true;
-						else if (entry.name === 'Blue') blue = true;
-					});
-
-					if (red && green && blue) attributes.push('COLOR_PACKED');
-
-					// Fill in geometry fields.
-					let pgg = new PointCloudGreyhoundGeometry();
-					pgg.serverURL = serverURL;
-					pgg.spacing = (bounds[3] - bounds[0]) / Math.pow(2, baseDepth);
-					pgg.baseDepth = baseDepth;
-					pgg.hierarchyStepSize = HIERARCHY_STEP_SIZE;
-
-					pgg.schema = GreyhoundUtils.createSchema(attributes);
-					let pointSize = GreyhoundUtils.pointSizeFrom(pgg.schema);
-
-					pgg.pointAttributes = new PointAttributes(attributes);
-					pgg.pointAttributes.byteSize = pointSize;
-
-					let boundingBox = new THREE.Box3(
-						new THREE.Vector3().fromArray(bounds, 0),
-						new THREE.Vector3().fromArray(bounds, 3)
-					);
-
-					let offset = boundingBox.min.clone();
-
-					boundingBox.max.sub(boundingBox.min);
-					boundingBox.min.set(0, 0, 0);
-
-					pgg.projection = greyhoundInfo.srs;
-					pgg.boundingBox = boundingBox;
-					pgg.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
-
-					pgg.scale = scale;
-					pgg.offset = offset;
-
-					console.log('Scale:', scale);
-					console.log('Offset:', offset);
-					console.log('Bounds:', boundingBox);
-
-					pgg.loader = new GreyhoundBinaryLoader(version, boundingBox, pgg.scale);
-
-					let nodes = {};
-
-					{ // load root
-						let name = 'r';
-
-						let root = new PointCloudGreyhoundGeometryNode(
-							name, pgg, boundingBox,
-							scale, offset
-						);
-
-						root.level = 0;
-						root.hasChildren = true;
-						root.numPoints = greyhoundInfo.numPoints;
-						root.spacing = pgg.spacing;
-						pgg.root = root;
-						pgg.root.load();
-						nodes[name] = root;
-					}
-
-					pgg.nodes = nodes;
-
-					GreyhoundUtils.getNormalization(serverURL, greyhoundInfo.baseDepth,
-						function (_, normalize) {
-							if (normalize.color) pgg.normalize.color = true;
-							if (normalize.intensity) pgg.normalize.intensity = true;
-
-							callback(pgg);
-						}
-					);
-				});
-			} catch (e) {
-				console.log("loading failed: '" + url + "'");
-				console.log(e);
-
-				callback();
-			}
-		}
-
-		loadPointAttributes(mno){
-			let fpa = mno.pointAttributes;
-			let pa = new PointAttributes();
-
-			for (let i = 0; i < fpa.length; i++) {
-				let pointAttribute = PointAttribute[fpa[i]];
-				pa.add(pointAttribute);
-			}
-
-			return pa;
-		}
-
-		createChildAABB(aabb, childIndex){
-			let min = aabb.min;
-			let max = aabb.max;
-			let dHalfLength = new THREE.Vector3().copy(max).sub(min).multiplyScalar(0.5);
-			let xHalfLength = new THREE.Vector3(dHalfLength.x, 0, 0);
-			let yHalfLength = new THREE.Vector3(0, dHalfLength.y, 0);
-			let zHalfLength = new THREE.Vector3(0, 0, dHalfLength.z);
-
-			let cmin = min;
-			let cmax = new THREE.Vector3().add(min).add(dHalfLength);
-
-			if (childIndex === 1) {
-				min = new THREE.Vector3().copy(cmin).add(zHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(zHalfLength);
-			} else if (childIndex === 3) {
-				min = new THREE.Vector3().copy(cmin).add(zHalfLength).add(yHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(zHalfLength).add(yHalfLength);
-			} else if (childIndex === 0) {
-				min = cmin;
-				max = cmax;
-			} else if (childIndex === 2) {
-				min = new THREE.Vector3().copy(cmin).add(yHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(yHalfLength);
-			} else if (childIndex === 5) {
-				min = new THREE.Vector3().copy(cmin).add(zHalfLength).add(xHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(zHalfLength).add(xHalfLength);
-			} else if (childIndex === 7) {
-				min = new THREE.Vector3().copy(cmin).add(dHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(dHalfLength);
-			} else if (childIndex === 4) {
-				min = new THREE.Vector3().copy(cmin).add(xHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(xHalfLength);
-			} else if (childIndex === 6) {
-				min = new THREE.Vector3().copy(cmin).add(xHalfLength).add(yHalfLength);
-				max = new THREE.Vector3().copy(cmax).add(xHalfLength).add(yHalfLength);
-			}
-
-			return new THREE.Box3(min, max);
-		}
-
-	}
 
 	class ClipVolume extends THREE.Object3D{
 		
@@ -25477,17 +24739,6 @@ ENDSEC
 					loaded(pointcloud);
 				}
 			});
-		} else if (path.indexOf('greyhound://') === 0){
-			// We check if the path string starts with 'greyhound:', if so we assume it's a greyhound server URL.
-			GreyhoundLoader.load(path, function (geometry) {
-				if (!geometry) {
-					//callback({type: 'loading_failed'});
-					console.error(new Error(`failed to load point cloud from URL: ${path}`));
-				} else {
-					let pointcloud = new PointCloudOctree(geometry);
-					loaded(pointcloud);
-				}
-			});
 		} else if (path.indexOf('cloud.js') > 0) {
 			POCLoader.load(path, function (geometry) {
 				if (!geometry) {
@@ -25538,8 +24789,6 @@ ENDSEC
 	exports.EyeDomeLightingMaterial = EyeDomeLightingMaterial;
 	exports.Features = Features;
 	exports.Gradients = Gradients;
-	exports.GreyhoundBinaryLoader = GreyhoundBinaryLoader;
-	exports.GreyhoundLoader = GreyhoundLoader;
 	exports.KeyCodes = KeyCodes;
 	exports.LRU = LRU;
 	exports.LRUItem = LRUItem;
@@ -25557,8 +24806,6 @@ ENDSEC
 	exports.PointAttributes = PointAttributes;
 	exports.PointCloudEptGeometry = PointCloudEptGeometry;
 	exports.PointCloudEptGeometryNode = PointCloudEptGeometryNode;
-	exports.PointCloudGreyhoundGeometry = PointCloudGreyhoundGeometry;
-	exports.PointCloudGreyhoundGeometryNode = PointCloudGreyhoundGeometryNode$1;
 	exports.PointCloudMaterial = PointCloudMaterial;
 	exports.PointCloudOctree = PointCloudOctree;
 	exports.PointCloudOctreeGeometry = PointCloudOctreeGeometry;
