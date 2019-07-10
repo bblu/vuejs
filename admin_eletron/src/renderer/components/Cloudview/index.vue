@@ -21,7 +21,27 @@ export default {
       center: 'L.latLng(40.0482567, 116.468478)',
       mapOptions: {
         zoomSnap: 0.5
-      }
+      },
+      req:{
+	"version": "1.4",
+	"octreeDir": "data",
+	"boundingBox": {
+		"lx": 516152.81,
+		"ly": 4010673.48,
+		"lz": 149.15,
+		"ux": 516161.12,
+		"uy": 4010678.79,
+		"uz": 173.78
+	},
+	"pointAttributes": "LAS",
+	"spacing": 0.0750000029802322,
+  "scale": 0.001,
+  "root": "3_1_0",
+	"hierarchy": [
+    ["3_1_0", 516152.81, 4010673.48, 149.15]
+		["3_1_1", 516152.86, 4010675.29, 164.93]
+	]
+}
     }
   },
   mounted() {
@@ -30,12 +50,13 @@ export default {
     viewer.setFOV(60)
     viewer.setPointBudget(5 * 1000 * 1000)
     viewer.setDescription('Tower View')
-    viewer.setBackground('gradient');
+    //viewer.setBackground('gradient');
     let scene = viewer.scene
 
     // Sigeom
-    //Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
-    this.loadPointCloud("../../../../static/data/31.las", "31", function(e){
+    // Potree.loadPointCloud("../../../../static/lion_las/cloud.js", "lion", function(e){
+    //this.loadPointCloud("http://localhost:8080/static/3_1.json", "lion", function(e){
+    this.loadPointCloud(this.req, "31", function(e){
 			viewer.scene.addPointCloud(e.pointcloud);
 			let material = e.pointcloud.material;
 			material.size = 1;
@@ -64,13 +85,14 @@ export default {
 			let line = new THREE.Line(geometry, material);
       // viewer.scene.scene.add(line);
       // viewer.fitToScreen();
-      viewer.zoomTo(line,1);
+      // viewer.zoomTo(line,1);
 		}
   
   },
   methods: {
     loadPointCloud(path, name, callback){
-      Potree.POCLoader.loadSingle(path,name, function (geometry) {
+      const baseUrl = '../../../../static'
+      Potree.POCLoader.loadJson(baseUrl,path, function (geometry) {
 				if (!geometry) {
 					//callback({type: 'loading_failed'});
 					console.error(new Error(`failed to load point cloud from URL: ${path}`));

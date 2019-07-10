@@ -2106,7 +2106,7 @@
 
 			return {'camera': camera, 'scene': scene};
 		};
-
+		// bblu TODO
 		static createGrid (width, length, spacing, color) {
 			let material = new THREE.LineBasicMaterial({
 				color: color || 0x888888
@@ -8022,7 +8022,7 @@ void main() {
 				}
 			}
 
-			// TODO read projection from file instead
+			//bblu TODO read projection from file instead
 			this.projection = geometry.projection;
 			this.fallbackProjection = geometry.fallbackProjection;
 
@@ -8048,7 +8048,11 @@ void main() {
 			// }
 			let sceneNode = new THREE.Points(geometryNode.geometry, this.material);
 			sceneNode.name = geometryNode.name;
+
 			sceneNode.position.copy(geometryNode.boundingBox.min);
+			// bblu
+			console.log('set sceneNode.position = ' + sceneNode.position);
+
 			sceneNode.frustumCulled = false;
 			sceneNode.onBeforeRender = (_this, scene, camera, geometry, material, group) => {
 				if (material.program) {
@@ -12030,6 +12034,8 @@ void main() {
 				console.log("failed to open file. :(");	
 			}).then( lf => {
 				return lf.getHeader().then(function (h) {
+					//bblu TODO read real bbox
+					console.log('header.mins = (' + h.mins +') header.maxs = ('+ h.maxs);
 					return [lf, h];
 				});
 			}).then( v => {
@@ -12136,6 +12142,7 @@ void main() {
 				);
 
 				geometry.boundingBox = this.node.boundingBox;
+
 				this.node.tightBoundingBox = tightBoundingBox;
 
 				this.node.geometry = geometry;
@@ -12524,7 +12531,100 @@ void main() {
 				callback();
 			}
 		}
+		// added by bblu @ 2019-7-10 
+		static loadJson(url,fMno, callback){
+			try {
+				let pco = new PointCloudOctreeGeometry();
+				pco.url = url;
 
+						let version = new Version(fMno.version);
+
+						// assume octreeDir is absolute if it starts with http
+						if (fMno.octreeDir.indexOf('http') === 0) {
+							pco.octreeDir = fMno.octreeDir;
+						} else {
+							pco.octreeDir = pco.url+ '/' + fMno.octreeDir;
+						}
+
+						pco.spacing = fMno.spacing;
+						pco.hierarchyStepSize = fMno.hierarchyStepSize;
+
+						pco.pointAttributes = fMno.pointAttributes;
+
+						let min = new THREE.Vector3(fMno.boundingBox.lx, fMno.boundingBox.ly, fMno.boundingBox.lz);
+						let max = new THREE.Vector3(fMno.boundingBox.ux, fMno.boundingBox.uy, fMno.boundingBox.uz);
+						let boundingBox = new THREE.Box3(min, max);
+						let tightBoundingBox = boundingBox.clone();
+
+						if (fMno.tightBoundingBox) {
+							tightBoundingBox.min.copy(new THREE.Vector3(fMno.tightBoundingBox.lx, fMno.tightBoundingBox.ly, fMno.tightBoundingBox.lz));
+							tightBoundingBox.max.copy(new THREE.Vector3(fMno.tightBoundingBox.ux, fMno.tightBoundingBox.uy, fMno.tightBoundingBox.uz));
+						}
+
+						let offset = min.clone();
+
+						boundingBox.min.sub(offset);
+						boundingBox.max.sub(offset);
+
+						tightBoundingBox.min.sub(offset);
+						tightBoundingBox.max.sub(offset);
+
+						pco.projection = fMno.projection;
+						pco.boundingBox = boundingBox;
+						pco.tightBoundingBox = tightBoundingBox;
+						pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+						pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
+						pco.offset = offset;
+						if (fMno.pointAttributes === 'LAS') {
+							pco.loader = new LasLazLoader(fMno.version);
+						} else if (fMno.pointAttributes === 'LAZ') {
+							pco.loader = new LasLazLoader(fMno.version);
+						} else {
+							pco.loader = new BinaryLoader(fMno.version, boundingBox, fMno.scale);
+							pco.pointAttributes = new PointAttributes(pco.pointAttributes);
+						}
+
+						let nodes = {};
+
+						{ // load root first
+							let name = fMno.root;
+
+							let root = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
+							root.level = 0;
+							root.hasChildren = true;
+							root.spacing = pco.spacing;
+							pco.root = root;
+							pco.root.load();
+							nodes[name] = root;
+						}
+
+						// load remaining hierarchy
+						if (version.upTo('1.4')) {
+							for (let i = 1; i < fMno.hierarchy.length; i++) {
+								let name = fMno.hierarchy[i][0];
+								let numPoints = fMno.hierarchy[i][1];
+								let parentName = fMno.root;
+								let parentNode = nodes[parentName];
+								let node = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
+								node.level = 0;
+								//node.numPoints = numPoints;
+								node.spacing = pco.spacing / Math.pow(2, node.level);
+								parentNode.addChild(node);
+								nodes[name] = node;
+							}
+						}
+
+						pco.nodes = nodes;
+
+						callback(pco);
+					
+			} catch (e) {
+				console.log("loading failed: '" + url + "'");
+				console.log(e);
+
+				callback();
+			}
+		}
 		static load(url, callback){
 			try {
 				let pco = new PointCloudOctreeGeometry();
@@ -23326,7 +23426,7 @@ ENDSEC
 			this.top.name = "U";
 			this.add(this.top);
 
-			this.width = 150; // in px
+			this.width = 100; // in px
 
 			this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 			this.camera.position.copy(new THREE.Vector3(0, 0, 0));
@@ -23611,7 +23711,7 @@ ENDSEC
 				this.clippingTool = new ClippingTool(this);
 				this.transformationTool = new TransformationTool(this);
 				this.navigationCube = new NavigationCube(this);
-				this.navigationCube.visible = false;
+				this.navigationCube.visible = true;
 				
 				this.createControls();
 
