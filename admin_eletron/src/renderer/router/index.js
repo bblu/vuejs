@@ -45,13 +45,14 @@ export const constantRouterMap = [
         path: 'table',
         name: 'LineTable',
         component: () => import('@/views/line/table'),
+        hidden: false,
         meta: { title: 'lineTable', icon: 'form' }
       },
       {
         path: 'cloud',
         name: 'PointCloud',
         component: () => import('@/views/line/cloud'),
-        meta: { title: 'pointCloud', icon: 'form' }
+        meta: { title: 'lineCloud', icon: 'form' }
       }
     ]
   },

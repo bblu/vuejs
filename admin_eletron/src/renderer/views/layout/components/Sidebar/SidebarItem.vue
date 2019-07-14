@@ -1,6 +1,6 @@
 <template>
   <div class="menu-wrapper">
-    <template v-for="item in routes" v-if="!item.hidden&&item.children">
+    <template v-for="item in routes" v-if="!item.hidden && item.children">
       <router-link v-if="hasOneShowingChildren(item.children) && !item.children[0].children&&!item.alwaysShow" :to="resolvePath(item)"
         :key="item.children[0].name">
         <el-menu-item :index="item.path+'/'+item.children[0].path" :class="{'submenu-title-noDropdown':!isNest}">
@@ -42,7 +42,7 @@ export default {
     },
     isNest: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   methods: {
