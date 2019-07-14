@@ -63,16 +63,16 @@ export const constantRouterMap = [
     meta: { title: 'fly', icon: 'example' },
     children: [
       {
-        path: 'tower',
-        name: 'tower',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'table', icon: 'table' }
+        path: 'style',
+        name: 'style',
+        component: () => import('@/views/fly/style'),
+        meta: { title: 'flystyle', icon: 'table' }
       },
       {
-        path: 'task',
-        name: 'task',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'tree', icon: 'tree' }
+        path: 'tower',
+        name: 'tower',
+        component: () => import('@/views/fly/tower'),
+        meta: { title: 'flytower', icon: 'tree' }
       }
     ]
   },
