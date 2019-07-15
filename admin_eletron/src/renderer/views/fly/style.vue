@@ -16,7 +16,7 @@
 
 <script>
 import CloudView from '@/components/Cloudview'
-import { getList, getTower } from '@/api/line'
+import { getStyle, getTower } from '@/api/tower'
 
 export default {
   components: {
@@ -54,21 +54,21 @@ export default {
     fetchData() {
       this.treeLoading = true
       const page = this
-      getList(this.listQuery).then(response => {
+      getStyle().then(response => {
         page.list = response.data
         page.treeData = []
         const treeMap = new Map()
-        for (const line of page.list) {
-          const v = line.voltage
+        for (const item of page.list) {
+          const v = item.voltage
           if (!treeMap[v]) {
             treeMap[v] = []
           }
           treeMap[v].push({
-            id: line.id,
-            name: line.name })
+            id: item.id,
+            name: item.name })
           if (page.currentLine == null) {
             page.currentLine = treeMap[v][0]
-            page.selectLine(line.id)
+            page.selectStyle(item.id)
           }
         }
         for (const key in treeMap) {
@@ -78,7 +78,7 @@ export default {
           console.log(key + '' + treeMap[key])
           page.treeData.push({
             id: key,
-            name: key + 'KV线路',
+            name: key + 'KV塔类型',
             children: treeMap[key] })
         }
         page.treeLoading = false
@@ -89,16 +89,16 @@ export default {
         return
       }
       this.currentLine = row
-      this.selectLine(row.id)
+      this.selectStyle(row.id)
     },
     onTableClick(row, event, column) {
       this.currentTower = row
       console.log('select tower ' + row.id)
     },
-    selectLine(lineId) {
+    selectStyle(id) {
       this.tableLoading = true
       const page = this
-      getTower(lineId).then(response => {
+      getStyle(id).then(response => {
         const towers = response.data
         for (const t of towers) {
           t.name = page.currentLine.name + t.serial + '#杆塔'

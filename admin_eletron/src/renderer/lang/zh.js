@@ -9,7 +9,7 @@ export default {
     flystyle: '塔型管理',
     flytower: '杆塔航迹',
     flytask: '飞行任务',
-    data: '数据管理',
+    data: '智能分析',
     upload: '飞行数据',
     analyze: '分析审核',
     statistics: '统计报告',
