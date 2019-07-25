@@ -7738,7 +7738,7 @@ void main() {
 
 			sceneNode.position.copy(geometryNode.boundingBox.min);
 			// bblu
-			console.log('set sceneNode.position = ' + sceneNode.position.x+','+ sceneNode.position.x+','+ sceneNode.position.x+')');
+			console.log('set sceneNode.position = (' + sceneNode.position.x+','+ sceneNode.position.x+','+ sceneNode.position.x+')');
 
 			sceneNode.frustumCulled = false;
 			sceneNode.onBeforeRender = (_this, scene, camera, geometry, material, group) => {
@@ -20824,7 +20824,7 @@ ENDSEC
 		}
 
 		init(){
-
+			console.log('potree sidebar init...');
 			this.initAccordion();
 			this.initAppearance();
 			this.initToolbar();
@@ -23034,7 +23034,7 @@ ENDSEC
 			if(args.useDefaultRenderLoop === undefined || args.useDefaultRenderLoop === true){
 				requestAnimationFrame(this.loop.bind(this));
 			}
-
+			console.log('potree this.loadGUI = this.loadGUI.bind(this)');
 			this.loadGUI = this.loadGUI.bind(this);
 
 			}catch(e){
@@ -23693,6 +23693,7 @@ ENDSEC
 		// ------------------------------------------------------------------------------------
 
 		createControls () {
+			console.log('potree createControls...')
 			{ // create FIRST PERSON CONTROLS
 				this.fpControls = new FirstPersonControls(this);
 				this.fpControls.enabled = false;
@@ -23762,7 +23763,7 @@ ENDSEC
 		}
 
 		loadGUI(callback){
-
+			console.log('potree loadGUI...');
 			this.onGUILoaded(callback);
 
 			let viewer = this;

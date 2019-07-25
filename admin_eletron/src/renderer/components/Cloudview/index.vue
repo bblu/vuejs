@@ -50,6 +50,9 @@ export default {
     viewer.setFOV(60)
     viewer.setPointBudget(5 * 1000 * 1000)
     viewer.setDescription('Tower View')
+    viewer.loadGUI(()=>{
+      console.log('model loaded gui');
+    })
     //viewer.setBackground('gradient');
     let scene = viewer.scene
 
