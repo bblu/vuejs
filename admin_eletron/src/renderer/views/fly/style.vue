@@ -16,7 +16,7 @@
 
 <script>
 import CloudView from '@/components/Cloudview'
-import { getStyle, getTower } from '@/api/tower'
+import { getStyle } from '@/api/tower'
 
 export default {
   components: {

@@ -39,6 +39,14 @@ const user = {
         })
       })
     },
+    // 登录
+    LoginAdmin({ commit }, userInfo) {
+      return new Promise((resolve, reject) => {
+        setToken('admin')
+        commit('SET_TOKEN', 'admin')
+        resolve()
+      })
+    },
 
     // 获取用户信息
     GetInfo({ commit, state }) {
