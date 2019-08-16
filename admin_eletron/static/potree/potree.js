@@ -7738,7 +7738,7 @@ void main() {
 
 			sceneNode.position.copy(geometryNode.boundingBox.min);
 			// bblu
-			console.log('set sceneNode.position = (' + sceneNode.position.x+','+ sceneNode.position.x+','+ sceneNode.position.x+')');
+			// console.log('set sceneNode.position = (' + sceneNode.position.x+','+ sceneNode.position.x+','+ sceneNode.position.x+')');
 
 			sceneNode.frustumCulled = false;
 			sceneNode.onBeforeRender = (_this, scene, camera, geometry, material, group) => {
@@ -12219,7 +12219,7 @@ void main() {
 			}
 		}
 		// added by bblu @ 2019-7-10 
-		static loadJson(url,fMno, viewer){
+		static loadJson(url,fMno, viewer,callback){
 			try {
 				
 				let min = new THREE.Vector3(fMno.boundingBox.lx, fMno.boundingBox.ly, fMno.boundingBox.lz);
@@ -12299,7 +12299,10 @@ void main() {
 				let material = pointcloud.material;
 				material.size = 1;
 				material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-				viewer.fitToScreen();
+				if(callback!=null){
+					callback(pcoGeo);
+				}
+				// viewer.fitToScreen();
 
 			} catch (e) {
 				console.log("loading failed: '" + url + "'");
@@ -21602,9 +21605,8 @@ ENDSEC
 				header.click(() => {
 					content.slideToggle();
 				});
-			});
-
-			let languages = [
+			}); 
+			/*let languages = [
 				["EN", "en"],
 				["FR", "fr"],
 				["DE", "de"],
@@ -21626,8 +21628,7 @@ ENDSEC
 				if(i < languages.length - 1){
 					elLanguages.append($(document.createTextNode(' - ')));	
 				}
-			}
-
+			}*/
 
 			// to close all, call
 			// $(".accordion > div").hide()
@@ -21637,7 +21638,6 @@ ENDSEC
 		}
 
 		initAppearance(){
-
 			$('#sldPointBudget').slider({
 				value: this.viewer.getPointBudget(),
 				min: 100 * 1000,
@@ -21645,7 +21645,7 @@ ENDSEC
 				step: 1000,
 				slide: (event, ui) => { this.viewer.setPointBudget(ui.value); }
 			});
-
+			
 			$('#sldFOV').slider({
 				value: this.viewer.getFOV(),
 				min: 20,
@@ -21653,6 +21653,18 @@ ENDSEC
 				step: 1,
 				slide: (event, ui) => { this.viewer.setFOV(ui.value); }
 			});
+			this.viewer.addEventListener('point_budget_changed', (event) => {
+				$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+				$('#sldPointBudget').slider({value: this.viewer.getPointBudget()});
+			});
+
+			this.viewer.addEventListener('fov_changed', (event) => {
+				$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
+				$('#sldFOV').slider({value: this.viewer.getFOV()});
+			});
+			$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+			$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
+/*
 			$('#sldFOL').slider({
 				value: this.viewer.getFOV(),
 				min: 20,
@@ -21683,16 +21695,6 @@ ENDSEC
 				slide: (event, ui) => { this.viewer.setEDLStrength(ui.value); }
 			});
 
-			this.viewer.addEventListener('point_budget_changed', (event) => {
-				$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
-				$('#sldPointBudget').slider({value: this.viewer.getPointBudget()});
-			});
-
-			this.viewer.addEventListener('fov_changed', (event) => {
-				$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
-				$('#sldFOV').slider({value: this.viewer.getFOV()});
-			});
-
 			this.viewer.addEventListener('edl_radius_changed', (event) => {
 				$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 				$('#sldEDLRadius').slider({value: this.viewer.getEDLRadius()});
@@ -21706,9 +21708,6 @@ ENDSEC
 			this.viewer.addEventListener('background_changed', (event) => {
 				$("input[name=background][value='" + this.viewer.getBackground() + "']").prop('checked', true);
 			});
-
-			$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
-			$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 			$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 			$('#lblEDLStrength')[0].innerHTML = this.viewer.getEDLStrength().toFixed(1);
 			$('#chkEDLEnabled')[0].checked = this.viewer.getEDLEnabled();
@@ -21727,7 +21726,7 @@ ENDSEC
 
 			$('#chkEDLEnabled').click( () => {
 				this.viewer.setEDLEnabled($('#chkEDLEnabled').prop("checked"));
-			});
+			});*/
 		}
 
 		initNavigation(){
@@ -23785,7 +23784,7 @@ ENDSEC
 
 				viewer.renderArea.insertBefore(imgMapToggle, viewer.renderArea.children[0]);
 				viewer.renderArea.insertBefore(imgMenuToggle, viewer.renderArea.children[0]);
-
+				/*
 				i18n.init({
 					lng: 'en',
 					resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
@@ -23795,7 +23794,7 @@ ENDSEC
 				}, function (t) {
 					// Start translation once everything is loaded
 					$('body').i18n();
-				});
+				});*/
 
 				$(() => {
 					//initSidebar(this);
@@ -23838,8 +23837,8 @@ ENDSEC
 		}
 
 		setLanguage (lang) {
-			i18n.setLng(lang);
-			$('body').i18n();
+			//i18n.setLng(lang);
+			//$('body').i18n();
 		}
 
 		setServer (server) {

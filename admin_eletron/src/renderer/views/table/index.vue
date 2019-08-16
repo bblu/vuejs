@@ -45,10 +45,10 @@ export default {
     return {
       list: null,
       listLoading: true,
-      items:[
-        {"id":"440000197810062718","title":"Lmkjh qpxd eflqaivf twowowy kxx bulsfjwvh xnjfsm jjrqusmvce jndhp ndw etefp ziztt jjoyfnotz emccdhst bcgrmly gfvzckuo.","status":"draft","author":"name","display_time":"1979-05-11 23:59:54","pageviews":2812},
-        {"id":"610000199405297266","title":"Jcpn gvhukj tqbf tqj wbjcuyttex zqrarjmelt mkod ntx xobhpbri bckb dbcfdzttm oviunrfro.","status":"draft","author":"name","display_time":"2011-01-24 14:55:27","pageviews":1895},
-        {"id":"640000201611199910","title":"Oyvh ctgrirdrd rgpk sqazepb wcms kxukavrou gqlnqkhy yrcmhj scxhwzv kmpbdwyl xphnsqmy ouo.","status":"deleted","author":"name","display_time":"1996-12-01 18:25:33","pageviews":3472}]
+      items: [
+        { 'id': '440000197810062718', 'title': 'Lmkjh qpxd eflqaivf twowowy kxx bulsfjwvh xnjfsm jjrqusmvce jndhp ndw etefp ziztt jjoyfnotz emccdhst bcgrmly gfvzckuo.', 'status': 'draft', 'author': 'name', 'display_time': '1979-05-11 23:59:54', 'pageviews': 2812 },
+        { 'id': '610000199405297266', 'title': 'Jcpn gvhukj tqbf tqj wbjcuyttex zqrarjmelt mkod ntx xobhpbri bckb dbcfdzttm oviunrfro.', 'status': 'draft', 'author': 'name', 'display_time': '2011-01-24 14:55:27', 'pageviews': 1895 },
+        { 'id': '640000201611199910', 'title': 'Oyvh ctgrirdrd rgpk sqazepb wcms kxukavrou gqlnqkhy yrcmhj scxhwzv kmpbdwyl xphnsqmy ouo.', 'status': 'deleted', 'author': 'name', 'display_time': '1996-12-01 18:25:33', 'pageviews': 3472 }]
     }
   },
   filters: {
@@ -68,10 +68,10 @@ export default {
     fetchData() {
       this.listLoading = true
       this.list = this.items
-      //getList(this.listQuery).then(response => {
-        //this.list = response.data.items
-        this.listLoading = false
-      //})
+      // getList(this.listQuery).then(response => {
+      // this.list = response.data.items
+      this.listLoading = false
+      // })
     }
   }
 }

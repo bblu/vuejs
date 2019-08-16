@@ -52,7 +52,13 @@ export const constantRouterMap = [
         path: 'cloud',
         name: 'PointCloud',
         component: () => import('@/views/line/cloud'),
-        meta: { title: 'lineCloud', icon: 'form' }
+        meta: { title: 'lineTower', icon: 'form' }
+      },
+      {
+        path: 'earth',
+        name: 'EarthCloud',
+        component: () => import('@/views/line/earth'),
+        meta: { title: 'lineEarth', icon: 'form' }
       }
     ]
   },

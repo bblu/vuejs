@@ -34,7 +34,7 @@
         <todo-list />
       </el-col>
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
+        <!--box-card /-->
       </el-col>
     </el-row>
   </div>
@@ -49,7 +49,7 @@ import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
 import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
+// import BoxCard from './components/BoxCard'
 
 const lineChartData = {
   newVisitis: {
@@ -81,7 +81,7 @@ export default {
     BarChart,
     TransactionTable,
     TodoList,
-    BoxCard
+    // BoxCard
   },
   data() {
     return {
