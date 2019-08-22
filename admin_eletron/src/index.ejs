@@ -9,17 +9,18 @@
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
       </script>
     <% } %>
-    <!--script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/jquery.min.js></script-->
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/BinaryHeap.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/stats.min.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/tween.min.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/proj4.js></script>
-		<script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/laslaz.js></script>
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/three.min.js></script>
-    <!--script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/jquery-ui/jquery-ui.min.js></script-->
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/potree.js></script>
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/cesium/cesium.js></script>
-    <script src=<%= htmlWebpackPlugin.options.path %>/static/potree/lib/i18next.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/BinaryHeap.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/laslaz.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/stats.min.js></script>
+		<script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/tween.min.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/three.min.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/jquery.min.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/proj4.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/d3.min.js></script>
+    <!--script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/jquery-ui/jquery-ui.min.js></script-->
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/potree.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/cesium/cesium.js></script>
+    <script src=<%= htmlWebpackPlugin.options.path %>/src/renderer/assets/potree/lib/i18next.js></script>
 
   </head>
   <body>

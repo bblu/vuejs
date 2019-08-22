@@ -17258,7 +17258,7 @@ void main() {
 			this.initSVG();
 			this.initListeners();
 
-			this.elRoot.i18n();
+			//this.elRoot.i18n();
 		}
 
 		initListeners () {
@@ -19580,7 +19580,7 @@ ENDSEC
 			</div>
 		`);
 
-			panel.i18n();
+			//panel.i18n();
 			this.container.append(panel);
 
 			{ // POINT SIZE
@@ -20838,7 +20838,7 @@ ENDSEC
 			this.initSettings();
 			
 			$('#potree_version_number').html(Potree.version.major + "." + Potree.version.minor + Potree.version.suffix);
-			$('.perfect_scrollbar').perfectScrollbar();
+			//$('.perfect_scrollbar').perfectScrollbar();
 		}
 
 			
@@ -21376,7 +21376,7 @@ ENDSEC
 
 			{
 				let elClipTask = $("#cliptask_options");
-				elClipTask.selectgroup({title: "Clip Task"});
+				/*elClipTask.selectgroup({title: "Clip Task"});
 
 				elClipTask.find("input").click( (e) => {
 					this.viewer.setClipTask(ClipTask[e.target.value]);
@@ -21384,12 +21384,12 @@ ENDSEC
 
 				let currentClipTask = Object.keys(ClipTask)
 					.filter(key => ClipTask[key] === this.viewer.clipTask);
-				elClipTask.find(`input[value=${currentClipTask}]`).trigger("click");
+				elClipTask.find(`input[value=${currentClipTask}]`).trigger("click");*/
 			}
 
 			{
 				let elClipMethod = $("#clipmethod_options");
-				elClipMethod.selectgroup({title: "Clip Method"});
+				/*elClipMethod.selectgroup({title: "Clip Method"});
 
 				elClipMethod.find("input").click( (e) => {
 					this.viewer.setClipMethod(ClipMethod[e.target.value]);
@@ -21397,7 +21397,7 @@ ENDSEC
 
 				let currentClipMethod = Object.keys(ClipMethod)
 					.filter(key => ClipMethod[key] === this.viewer.clipMethod);
-				elClipMethod.find(`input[value=${currentClipMethod}]`).trigger("click");
+				elClipMethod.find(`input[value=${currentClipMethod}]`).trigger("click");*/
 			}
 
 			let clippingToolBar = $("#clipping_tools");
@@ -21828,13 +21828,13 @@ ENDSEC
 			</selectgroup>
 		`);
 			elNavigation.append(elCameraProjection);
-			elCameraProjection.selectgroup({title: "Camera Projection"});
+			/*elCameraProjection.selectgroup({title: "Camera Projection"});
 			elCameraProjection.find("input").click( (e) => {
 				this.viewer.setCameraMode(CameraMode[e.target.value]);
 			});
 			let cameraMode = Object.keys(CameraMode)
 				.filter(key => CameraMode[key] === this.viewer.scene.cameraMode);
-			elCameraProjection.find(`input[value=${cameraMode}]`).trigger("click");
+			elCameraProjection.find(`input[value=${cameraMode}]`).trigger("click");*/
 
 			let speedRange = new THREE.Vector2(1, 10 * 1000);
 
@@ -21883,7 +21883,7 @@ ENDSEC
 
 			{
 				let elSplatQuality = $("#splat_quality_options");
-				elSplatQuality.selectgroup({title: "Splat Quality"});
+				/*elSplatQuality.selectgroup({title: "Splat Quality"});
 
 				elSplatQuality.find("input").click( (e) => {
 					if(e.target.value === "standard"){
@@ -21894,7 +21894,7 @@ ENDSEC
 				});
 
 				let currentQuality = this.viewer.useHQ ? "hq" : "standard";
-				elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
+				elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");*/
 			}
 
 			$('#show_bounding_box').click(() => {
@@ -24486,7 +24486,7 @@ ENDSEC
 						group.max = Math.max(group.max, measure.duration);
 					}
 
-					let glQueries = Potree.resolveQueries(this.renderer.getContext());
+					/*let glQueries = Potree.resolveQueries(this.renderer.getContext());
 					for(let [key, value] of glQueries){
 
 						let group = {
@@ -24500,7 +24500,7 @@ ENDSEC
 						let groupname = `[tq] ${key}`;
 						groups.set(groupname, group);
 						names.add(groupname);
-					}
+					}*/
 					
 					for(let [name, group] of groups){
 						group.mean = group.sum / group.n;

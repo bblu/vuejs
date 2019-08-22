@@ -11,9 +11,20 @@
 </template>
 
 <script>
+import '@/assets/potree/potree.css' // 点云css样式
+import '@/assets/potree/lib/spectrum.css'
+import '@/assets/potree/lib/jquery-ui/jquery-ui.min.css'
+import '@/assets/cesium/Widgets/CesiumWidget/CesiumWidget.css'
+
 import $ from '@/assets/potree/lib/jquery.min.js'
-require('@/../../static/potree/lib/jstree.min.js')
-require('@/../../static/potree/lib/jquery-ui/jquery-ui.min.js')
+//require('@/assets/potree/lib/three.min.js')
+require('@/assets/potree/lib/spectrum.js')
+require('@/assets/potree/lib/jstree.min.js')
+//import $ from '@/assets/potree/lib/jquery.min.js'
+require('@/assets/potree/lib/jquery-ui/jquery-ui.min.js')
+
+//require('@/assets/potree/potree.js')
+//require('@/assets/cesium/cesium.js')
 
 export default {
   components: {},

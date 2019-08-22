@@ -16,9 +16,6 @@
 
 <script>
 import EarthView from '@/components/Earthview'
-import '@/assets/potree/potree.css'; // 点云css样式
-import '@/../../static/potree/lib/jquery-ui/jquery-ui.min.css';
-import '@/../../static/cesium/Widgets/CesiumWidget/CesiumWidget.css';
 import { getList, getTower } from '@/api/line'
 
 export default {
