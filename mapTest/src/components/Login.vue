@@ -44,8 +44,8 @@ export default {
     data() {
         return {
             dynamicValidateForm: {
-                email: 'worker',
-                password: '123'
+                email: '',
+                password: ''
             },
             activeName: this.$store.state.activeName,
             // 输入校验
