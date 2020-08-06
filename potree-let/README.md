@@ -1,6 +1,6 @@
 # potree-vue
 
-> A Vue.js project
+> A Vue.js project and cut off jquery from potree
 
 ## Build Setup
 
