@@ -1,6 +1,8 @@
 # potree-vue
 
 > A Vue.js project and cut off jquery from potree
+## Prepare
+extract zif file at static/pointclouds/lion_takanawa_las.zip
 
 ## Build Setup
 
