@@ -80,7 +80,7 @@ export default {
     PieChart,
     BarChart,
     TransactionTable,
-    TodoList,
+    TodoList
     // BoxCard
   },
   data() {

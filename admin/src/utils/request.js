@@ -31,7 +31,9 @@ service.interceptors.response.use(
      * code为非20000是抛错 可结合自己业务进行修改
      */
     const res = response.data
-    if (res.code !== 20000) {
+    console.log('response.status=',response.status)
+
+    if (res.code == 400) {
       Message({
         message: res.message,
         type: 'error',

@@ -31,15 +31,15 @@ import '@/assets/potree/lib/jquery-ui/jquery-ui.min.css'
 import '@/assets/cesium/Widgets/CesiumWidget/CesiumWidget.css'
 
 import $ from '@/assets/potree/lib/jquery.min.js'
-//require('@/assets/potree/lib/laslaz.js')
-//const BinaryHeap = require('@/assets/potree/lib/BinaryHeap.js')
-//require('@/assets/potree/lib/three.min.js')
-//require('@/assets/potree/lib/d3.min.js')
+// require('@/assets/potree/lib/laslaz.js')
+// const BinaryHeap = require('@/assets/potree/lib/BinaryHeap.js')
+// require('@/assets/potree/lib/three.min.js')
+// require('@/assets/potree/lib/d3.min.js')
 require('@/assets/potree/lib/spectrum.js')
 require('@/assets/potree/lib/jstree.min.js')
-//require('@/assets/potree/lib/jquery.min.js')
+// require('@/assets/potree/lib/jquery.min.js')
 require('@/assets/potree/lib/jquery-ui/jquery-ui.min.js')
-//require('@/assets/potree/potree.js')
+// require('@/assets/potree/potree.js')
 
 export default {
   components: {},
@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    //debugger
+    // debugger
     window.viewer = new Potree.Viewer(
       document.getElementById('potree_render_area')
     )
@@ -91,8 +91,8 @@ export default {
     // Sigeom
     // Potree.loadPointCloud('../../../../static/lion_las/cloud.js', 'lion', function(e){
     // this.loadPointCloud('http://localhost:8080/static/3_1.json', 'lion', function(e){
-    this.loadPointCloud(this.req, viewer,(e)=>{
-      viewer.fitToScreen();
+    this.loadPointCloud(this.req, viewer, (e) => {
+      viewer.fitToScreen()
     })
 
     {
@@ -128,9 +128,9 @@ export default {
     }
   },
   methods: {
-    loadPointCloud(path, viewer,callback) {
+    loadPointCloud(path, viewer, callback) {
       const baseUrl = '../../../../static'
-      Potree.POCLoader.loadJson(baseUrl, path, viewer,callback)
+      Potree.POCLoader.loadJson(baseUrl, path, viewer, callback)
     },
     loadPointCloud2(path, name, callback) {
       Potree.POCLoader.load(path, function(geometry) {

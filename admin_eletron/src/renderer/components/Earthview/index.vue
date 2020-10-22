@@ -17,14 +17,14 @@ import '@/assets/potree/lib/jquery-ui/jquery-ui.min.css'
 import '@/assets/cesium/Widgets/CesiumWidget/CesiumWidget.css'
 
 import $ from '@/assets/potree/lib/jquery.min.js'
-//require('@/assets/potree/lib/three.min.js')
+// require('@/assets/potree/lib/three.min.js')
 require('@/assets/potree/lib/spectrum.js')
 require('@/assets/potree/lib/jstree.min.js')
-//import $ from '@/assets/potree/lib/jquery.min.js'
+// import $ from '@/assets/potree/lib/jquery.min.js'
 require('@/assets/potree/lib/jquery-ui/jquery-ui.min.js')
 
-//require('@/assets/potree/potree.js')
-//require('@/assets/cesium/cesium.js')
+// require('@/assets/potree/potree.js')
+// require('@/assets/cesium/cesium.js')
 
 export default {
   components: {},
@@ -59,90 +59,90 @@ export default {
     }
   },
   mounted() {
-window.cesiumViewer = new Cesium.Viewer('cesiumContainer', {
-		useDefaultRenderLoop: false,
-		animation: false,
-		baseLayerPicker : false,
-		fullscreenButton: false, 
-		geocoder: false,
-		homeButton: false,
-		infoBox: false,
-		sceneModePicker: false,
-		selectionIndicator: false,
-		timeline: false,
-		navigationHelpButton: false,
-		imageryProvider : Cesium.createOpenStreetMapImageryProvider({url : 'https://a.tile.openstreetmap.org/'}),
-		terrainShadows: Cesium.ShadowMode.DISABLED,
-	});
+    window.cesiumViewer = new Cesium.Viewer('cesiumContainer', {
+      useDefaultRenderLoop: false,
+      animation: false,
+      baseLayerPicker: false,
+      fullscreenButton: false,
+      geocoder: false,
+      homeButton: false,
+      infoBox: false,
+      sceneModePicker: false,
+      selectionIndicator: false,
+      timeline: false,
+      navigationHelpButton: false,
+      imageryProvider: Cesium.createOpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' }),
+      terrainShadows: Cesium.ShadowMode.DISABLED
+    })
 
-	let cp = new Cesium.Cartesian3(4303414.154026048, 552161.235598733, 4660771.704035539);
-	cesiumViewer.camera.setView({
-		destination : cp,
-		orientation: {
-			heading : 10, 
-			pitch : -Cesium.Math.PI_OVER_TWO * 0.5, 
-			roll : 0.0 
-		}
-	});
+    const cp = new Cesium.Cartesian3(4303414.154026048, 552161.235598733, 4660771.704035539)
+    cesiumViewer.camera.setView({
+      destination: cp,
+      orientation: {
+        heading: 10,
+        pitch: -Cesium.Math.PI_OVER_TWO * 0.5,
+        roll: 0.0
+      }
+    })
 
-	window.potreeViewer = new Potree.Viewer(document.getElementById("potree_render_area"), {
-		useDefaultRenderLoop: false
-	});
-	potreeViewer.setEDLEnabled(true);
-	potreeViewer.setFOV(60);
-	potreeViewer.setPointBudget(4*1000*1000);
-	potreeViewer.setMinNodeSize(50);
-	potreeViewer.loadSettingsFromURL();
-	potreeViewer.setBackground(null);
-	potreeViewer.useHQ = true;
+    window.potreeViewer = new Potree.Viewer(document.getElementById('potree_render_area'), {
+      useDefaultRenderLoop: false
+    })
+    potreeViewer.setEDLEnabled(true)
+    potreeViewer.setFOV(60)
+    potreeViewer.setPointBudget(4 * 1000 * 1000)
+    potreeViewer.setMinNodeSize(50)
+    potreeViewer.loadSettingsFromURL()
+    potreeViewer.setBackground(null)
+    potreeViewer.useHQ = true
 
-	/*potreeViewer.setDescription(`
-		Potree using <a href="https://cesiumjs.org/" target="_blank">Cesium</a> to display an 
+    /* potreeViewer.setDescription(`
+		Potree using <a href="https://cesiumjs.org/" target="_blank">Cesium</a> to display an
 		<a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> map below.<br>
 		Point cloud courtesy of <a href="http://riegl.com/" target="_blank">Riegl</a><br>`);*/
 
-	potreeViewer.loadGUI(() => {
-		// potreeViewer.setLanguage('en');
-		$("#menu_appearance").next().show();
-		$("#menu_tools").next().show();
-		$("#menu_scene").next().show(); 
-		potreeViewer.toggleSidebar();
-  });
+    potreeViewer.loadGUI(() => {
+      // potreeViewer.setLanguage('en');
+      $('#menu_appearance').next().show()
+      $('#menu_tools').next().show()
+      $('#menu_scene').next().show()
+      potreeViewer.toggleSidebar()
+    })
 
-	Potree.loadPointCloud("http://5.9.65.151/mschuetz/potree/resources/pointclouds/riegl/retz/cloud.js", "Retz", function(e){
-		let scene = potreeViewer.scene;
-		
-		scene.addPointCloud(e.pointcloud);
-		e.pointcloud.position.set(569277.402752, 5400050.599046, 0);
-		e.pointcloud.rotation.set(0, 0, -0.035);
+    Potree.loadPointCloud('http://5.9.65.151/mschuetz/potree/resources/pointclouds/riegl/retz/cloud.js', 'Retz', function(e) {
+      const scene = potreeViewer.scene
 
-		let material = e.pointcloud.material;
-		material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-		material.size = 0.7;
-		material.elevationRange = [0, 70];
-		
-    scene.view.position.set(570975.577, 5398630.521, 1659.311);
-    scene.view.lookAt(570115.285, 5400866.092, 30.009);
-    
-		Potree.measureTimings = true;
+      scene.addPointCloud(e.pointcloud)
+      e.pointcloud.position.set(569277.402752, 5400050.599046, 0)
+      e.pointcloud.rotation.set(0, 0, -0.035)
 
-		{
-			let aTownHall = new Potree.Annotation({
-				position: [569879.768, 5400886.182, 80.691],
-				title: "Town Hall",
-				cameraPosition: [569955.329, 5400822.949, 98.807],
-				cameraTarget: [569879.768, 5400886.182, 46.691]
-			});
-			scene.annotations.add(aTownHall);
+      const material = e.pointcloud.material
+      material.pointSizeType = Potree.PointSizeType.ADAPTIVE
+      material.size = 0.7
+      material.elevationRange = [0, 70]
 
-			let aTrainStation = new Potree.Annotation({
-				position: [570337.407, 5400522.730, 30],
-				title: "Train Station",
-				cameraPosition: [570377.074, 5400427.884, 100.576],
-				cameraTarget: [570337.407, 5400522.730, 18.595]
-			});
-			scene.annotations.add(aTrainStation);
-/*
+      scene.view.position.set(570975.577, 5398630.521, 1659.311)
+      scene.view.lookAt(570115.285, 5400866.092, 30.009)
+
+      Potree.measureTimings = true
+
+      {
+        const aTownHall = new Potree.Annotation({
+          position: [569879.768, 5400886.182, 80.691],
+          title: 'Town Hall',
+          cameraPosition: [569955.329, 5400822.949, 98.807],
+          cameraTarget: [569879.768, 5400886.182, 46.691]
+        })
+        scene.annotations.add(aTownHall)
+
+        const aTrainStation = new Potree.Annotation({
+          position: [570337.407, 5400522.730, 30],
+          title: 'Train Station',
+          cameraPosition: [570377.074, 5400427.884, 100.576],
+          cameraTarget: [570337.407, 5400522.730, 18.595]
+        })
+        scene.annotations.add(aTrainStation)
+        /*
 			{ // Attribute Selector Annotation
 
 				// Create title element with jquery
@@ -183,7 +183,7 @@ window.cesiumViewer = new Cesium.Viewer('cesiumContainer', {
 						<span name="med"  style="font-family: monospace; margin-left: 4px">med</span>
 						<span name="high" style="font-family: monospace; margin-left: 4px">high</span>
 					</span>`);
-				
+
 				elTitle.find("span").mouseover( (e) => {
 					$(e.target).css("filter", "drop-shadow(0px 0px 1px white)");
 				}).mouseout( (e) => {
@@ -215,114 +215,108 @@ window.cesiumViewer = new Cesium.Viewer('cesiumContainer', {
 				});
 				scene.annotations.add(aActions);
 			}*/
-		}
-		
+      }
 
-		//let pointcloudProjection = e.pointcloud.projection;
-		let pointcloudProjection = "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
-		let mapProjection = proj4.defs("WGS84");
+      // let pointcloudProjection = e.pointcloud.projection;
+      const pointcloudProjection = '+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+      const mapProjection = proj4.defs('WGS84')
 
-		window.toMap = proj4(pointcloudProjection, mapProjection);
-		window.toScene = proj4(mapProjection, pointcloudProjection);
-		
-		{
-			let bb = potreeViewer.getBoundingBox();
+      window.toMap = proj4(pointcloudProjection, mapProjection)
+      window.toScene = proj4(mapProjection, pointcloudProjection)
 
-			let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
-      let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
-      console.log(minWGS84,maxWGS84);
-		}
-  });
-  
-  this.loadPointCloud(this.req, potreeViewer, function(e){
+      {
+        const bb = potreeViewer.getBoundingBox()
 
-    e.pointcloud.position.set(569277.402752, 5400050.599046, 0);
-		e.pointcloud.rotation.set(0, 0, -0.035);
-    let scene = potreeViewer.scene;
-    scene.view.position.set(516152.81,4010673.48, 1659.311);
-    scene.view.lookAt(516152.285, 4020673.092, 30.009);
-    
-    let pointcloudProjection = "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
-		let mapProjection = proj4.defs("WGS84");
+        const minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray())
+        const maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray())
+        console.log(minWGS84, maxWGS84)
+      }
+    })
 
-		window.toMap = proj4(pointcloudProjection, mapProjection);
-		window.toScene = proj4(mapProjection, pointcloudProjection);
-		
-		{
-			let bb = potreeViewer.getBoundingBox();
+    this.loadPointCloud(this.req, potreeViewer, function(e) {
+      e.pointcloud.position.set(569277.402752, 5400050.599046, 0)
+      e.pointcloud.rotation.set(0, 0, -0.035)
+      const scene = potreeViewer.scene
+      scene.view.position.set(516152.81, 4010673.48, 1659.311)
+      scene.view.lookAt(516152.285, 4020673.092, 30.009)
 
-			let minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray());
-      let maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray());
-      console.log(minWGS84,maxWGS84);
-		}
-  })
-	function loop(timestamp){
-		requestAnimationFrame(loop);
+      const pointcloudProjection = '+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+      const mapProjection = proj4.defs('WGS84')
 
-		potreeViewer.update(potreeViewer.clock.getDelta(), timestamp);
+      window.toMap = proj4(pointcloudProjection, mapProjection)
+      window.toScene = proj4(mapProjection, pointcloudProjection)
 
-		potreeViewer.render();
+      {
+        const bb = potreeViewer.getBoundingBox()
 
-		if(window.toMap !== undefined){
+        const minWGS84 = proj4(pointcloudProjection, mapProjection, bb.min.toArray())
+        const maxWGS84 = proj4(pointcloudProjection, mapProjection, bb.max.toArray())
+        console.log(minWGS84, maxWGS84)
+      }
+    })
+    function loop(timestamp) {
+      requestAnimationFrame(loop)
 
-			{
-				let camera = potreeViewer.scene.getActiveCamera();
+      potreeViewer.update(potreeViewer.clock.getDelta(), timestamp)
 
-				let pPos		= new THREE.Vector3(0, 0, 0).applyMatrix4(camera.matrixWorld);
-				let pRight  = new THREE.Vector3(600, 0, 0).applyMatrix4(camera.matrixWorld);
-				let pUp		 = new THREE.Vector3(0, 600, 0).applyMatrix4(camera.matrixWorld);
-				let pTarget = potreeViewer.scene.view.getPivot();
+      potreeViewer.render()
 
-				let toCes = (pos) => {
-					let xy = [pos.x, pos.y];
-					let height = pos.z;
-					let deg = toMap.forward(xy);
-					let cPos = Cesium.Cartesian3.fromDegrees(...deg, height);
+      if (window.toMap !== undefined) {
+        {
+          const camera = potreeViewer.scene.getActiveCamera()
 
-					return cPos;
-				};
+          const pPos		= new THREE.Vector3(0, 0, 0).applyMatrix4(camera.matrixWorld)
+          const pRight = new THREE.Vector3(600, 0, 0).applyMatrix4(camera.matrixWorld)
+          const pUp		 = new THREE.Vector3(0, 600, 0).applyMatrix4(camera.matrixWorld)
+          const pTarget = potreeViewer.scene.view.getPivot()
 
-				let cPos = toCes(pPos);
-				let cUpTarget = toCes(pUp);
-				let cTarget = toCes(pTarget);
+          const toCes = (pos) => {
+            const xy = [pos.x, pos.y]
+            const height = pos.z
+            const deg = toMap.forward(xy)
+            const cPos = Cesium.Cartesian3.fromDegrees(...deg, height)
 
-				let cDir = Cesium.Cartesian3.subtract(cTarget, cPos, new Cesium.Cartesian3());
-				let cUp = Cesium.Cartesian3.subtract(cUpTarget, cPos, new Cesium.Cartesian3());
+            return cPos
+          }
 
-				cDir = Cesium.Cartesian3.normalize(cDir, new Cesium.Cartesian3());
-				cUp = Cesium.Cartesian3.normalize(cUp, new Cesium.Cartesian3());
+          const cPos = toCes(pPos)
+          const cUpTarget = toCes(pUp)
+          const cTarget = toCes(pTarget)
 
-				cesiumViewer.camera.setView({
-					destination : cPos,
-					orientation : {
-						direction : cDir,
-						up : cUp
-					}
-				});
-				
-			}
+          let cDir = Cesium.Cartesian3.subtract(cTarget, cPos, new Cesium.Cartesian3())
+          let cUp = Cesium.Cartesian3.subtract(cUpTarget, cPos, new Cesium.Cartesian3())
 
-			let aspect = potreeViewer.scene.getActiveCamera().aspect;
-			if(aspect < 1){
-				let fovy = Math.PI * (potreeViewer.scene.getActiveCamera().fov / 180);
-				cesiumViewer.camera.frustum.fov = fovy;
-			}else{
-				let fovy = Math.PI * (potreeViewer.scene.getActiveCamera().fov / 180);
-				let fovx = Math.atan(Math.tan(0.5 * fovy) * aspect) * 2
-				cesiumViewer.camera.frustum.fov = fovx;
-			}
-			
-		}
+          cDir = Cesium.Cartesian3.normalize(cDir, new Cesium.Cartesian3())
+          cUp = Cesium.Cartesian3.normalize(cUp, new Cesium.Cartesian3())
 
-		cesiumViewer.render();
-	}
-	requestAnimationFrame(loop);
+          cesiumViewer.camera.setView({
+            destination: cPos,
+            orientation: {
+              direction: cDir,
+              up: cUp
+            }
+          })
+        }
 
+        const aspect = potreeViewer.scene.getActiveCamera().aspect
+        if (aspect < 1) {
+          const fovy = Math.PI * (potreeViewer.scene.getActiveCamera().fov / 180)
+          cesiumViewer.camera.frustum.fov = fovy
+        } else {
+          const fovy = Math.PI * (potreeViewer.scene.getActiveCamera().fov / 180)
+          const fovx = Math.atan(Math.tan(0.5 * fovy) * aspect) * 2
+          cesiumViewer.camera.frustum.fov = fovx
+        }
+      }
+
+      cesiumViewer.render()
+    }
+    requestAnimationFrame(loop)
   },
   methods: {
-    loadPointCloud(path, viewer,callback) {
+    loadPointCloud(path, viewer, callback) {
       const baseUrl = '../../../../static'
-      Potree.POCLoader.loadJson(baseUrl, path, viewer,callback)
+      Potree.POCLoader.loadJson(baseUrl, path, viewer, callback)
     },
     loadPointCloud2(path, name, callback) {
       Potree.POCLoader.load(path, function(geometry) {

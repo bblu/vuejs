@@ -10,7 +10,7 @@
       <circle cx="100" cy="100" r="80"/>
       <rect :x="stats[0].value" :width="collection[0].w" y="0" height="100" />
     </svg>
-    <div v-for="stat in stats">
+    <div v-for="stat in stats" :key="stat.label">
       <label>{{ stat.label }}</label>
       <input v-model="stat.value" type="range" min="0" max="100">
       <span>{{ stat.value }}</span>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 //      <rect :x="this.graphList[0].x" :y="graphList[0].y" :width="graphList[0].w" :height="graphList[0].h"/>
 var stats = [
   { label: 'A', value: 100 },
@@ -30,7 +31,7 @@ var stats = [
 var collection = [
   { type: 'r', x: 50, y: 30, w: 200, h: 100 }
 ]
-var downFlag = false;
+var downFlag = false
 
 export default {
   data() {
@@ -57,14 +58,14 @@ export default {
       downFlag = true
     },
     onMouseMove(e) {
-      if(downFlag){
-        
+      if (downFlag){
+        console.log('downMove')
       }
     },
-    onMouseUp(e){
-      if(downFlag){
+    onMouseUp(e) {
+      if (downFlag) {
         console.log('mouse drag to', e.offsetX, e.offsetY)
-      }else{
+      } else {  
         console.log('mouse up at', e.offsetX, e.offsetY)
       }
       downFlag = false
